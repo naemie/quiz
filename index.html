@@ -1,1106 +1,1153 @@
-import React, { useState, useMemo } from 'react';
-import { Search, RotateCcw, CheckCircle, XCircle, Trophy, BookOpen, AlertCircle } from 'lucide-react';
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NetReviewer Pro - Introduction to Networking</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        .animate-fade-in { animation: fadeIn 0.3s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
 
-const NetworkingReviewer = () => {
-  const [userAnswers, setUserAnswers] = useState({});
-  const [searchTerm, setSearchTerm] = useState('');
-
-  // Comprehensive 150-item question bank with Explanations based on the provided text
-  const questions = [
-    // Section 1: Computer Network Fundamentals
-    { 
-      q: "What is defined as a group of two or more computers connected together to share resources?", 
-      options: ["Stand-Alone Computer", "Computer Network", "Server Farm", "Workstation"], 
-      a: 1,
-      explanation: "A Computer Network is defined as a group of two or more computers connected together to communicate and share resources such as data, files, hardware, software, and internet."
-    },
-    { 
-      q: "A computer that uses only its local programs and data and is not connected to any network is called a:", 
-      options: ["Network Client", "Server", "Stand-Alone Computer", "Terminal"], 
-      a: 2,
-      explanation: "A Stand-Alone Computer uses only its local programs and data and is not connected to any network."
-    },
-    { 
-      q: "Which of the following is NOT a primary benefit of networking mentioned in the material?", 
-      options: ["Sharing of hardware", "Enhanced communication", "Increased individual computer processing speed", "Data security and management"], 
-      a: 2,
-      explanation: "The benefits listed include sharing of info, programs, hardware, data security, simultaneous access, internet sharing, and enhanced communication. Processing speed is not listed."
-    },
-    { 
-      q: "Sharing a printer among multiple office workers is an example of:", 
-      options: ["Software Sharing", "Hardware Sharing", "Internet Access Sharing", "Data Management"], 
-      a: 1,
-      explanation: "Sharing a printer, scanner, or storage devices is classified as Sharing of Hardware."
-    },
-    { 
-      q: "Which benefit of networking allows multiple users to work on the same data at the same time?", 
-      options: ["Enhanced communication", "Simultaneous access to data", "Hardware sharing", "Internet access sharing"], 
-      a: 1,
-      explanation: "Simultaneous access to data allows multiple users to access and work on the same files or database records at the same time."
-    },
-    { 
-      q: "What are the two main requirements to transfer data over a network?", 
-      options: ["Internet and Modem", "Transmission Medium and Transmitting/Receiving Devices", "Router and Switch", "Server and Client"], 
-      a: 1,
-      explanation: "To transfer data, two things are required: a Transmission Medium (to carry the signal) and Transmitting/Receiving Devices (to send/receive the signal)."
-    },
-    { 
-      q: "The physical path that carries the signal in a network is known as the:", 
-      options: ["Transmitting Device", "Network Adapter", "Transmission Medium", "Gateway"], 
-      a: 2,
-      explanation: "The Transmission Medium is the component that carries the signal from one device to another."
-    },
-    { 
-      q: "Which of the following is an example of 'Enhanced Communication' in networking?", 
-      options: ["Printing a document", "Saving a file to a flash drive", "Sending an email with attachments", "Scanning a photo"], 
-      a: 2,
-      explanation: "Enhanced communication includes services like email and file attachments."
-    },
-    { 
-      q: "What type of resource is Microsoft Word when accessed from a central server by multiple clients?", 
-      options: ["Hardware resource", "Software/Program resource", "Internet resource", "External resource"], 
-      a: 1,
-      explanation: "Sharing of programs and software allows applications to be run from a network server."
-    },
-    { 
-      q: "Data security and management is listed as a:", 
-      options: ["Disadvantage of networking", "Benefit of networking", "Type of cable", "Network device"], 
-      a: 1,
-      explanation: "Data security and management is explicitly listed as a Benefit of Networking."
-    },
-
-    // Section 2: Transmission Media
-    { 
-      q: "Which category of transmission media uses physical cables or wires?", 
-      options: ["Unguided Media", "Guided Media", "Wireless Media", "Radiowave Media"], 
-      a: 1,
-      explanation: "Guided Media uses physical cables or wires to transmit data."
-    },
-    { 
-      q: "Unguided media refers to:", 
-      options: ["Fiber-optic cables", "Wireless transmission (radio, microwave, infrared)", "Coaxial cables", "Copper wires"], 
-      a: 1,
-      explanation: "Unguided Media is wireless and includes radio, microwave, and infrared transmission."
-    },
-    { 
-      q: "Which of the following is NOT a type of guided media?", 
-      options: ["Unshielded Twisted Pair (UTP)", "Microwave", "Coaxial Cable", "Fiber-Optic Cable"], 
-      a: 1,
-      explanation: "Microwave is a form of Unguided (wireless) media. UTP, Coax, and Fiber are Guided (wired)."
-    },
-    { 
-      q: "What is the primary purpose of twisting the wires in a Twisted Pair cable?", 
-      options: ["To make the cable stronger", "To reduce electromagnetic interference", "To increase the length of the cable", "To make it easier to cut"], 
-      a: 1,
-      explanation: "Twisting the wires together reduces electromagnetic interference (noise)."
-    },
-    { 
-      q: "What does UTP stand for?", 
-      options: ["Universal Twisted Pair", "Uniform Transfer Protocol", "Unshielded Twisted Pair", "Ultra Transmission Path"], 
-      a: 2,
-      explanation: "UTP stands for Unshielded Twisted Pair."
-    },
-    { 
-      q: "What is the main difference between UTP and STP?", 
-      options: ["UTP is faster", "STP has a metal foil or braided shield", "STP is cheaper", "UTP uses light to transmit data"], 
-      a: 1,
-      explanation: "STP (Shielded Twisted Pair) has a metal foil or braided shield for better noise protection, whereas UTP does not."
-    },
-    { 
-      q: "Which cable type is described as being covered with plastic, cheap, and commonly used?", 
-      options: ["STP", "Coaxial", "UTP", "Fiber-Optic"], 
-      a: 2,
-      explanation: "UTP is described as having no shielding, being covered with plastic, cheap, and commonly used."
-    },
-    { 
-      q: "STP stands for:", 
-      options: ["Shielded Twisted Pair", "Standard Twisted Pair", "Secure Transmission Protocol", "Signal Transfer Point"], 
-      a: 0,
-      explanation: "STP stands for Shielded Twisted Pair."
-    },
-    { 
-      q: "Which cable type provides better noise protection but is more expensive than UTP?", 
-      options: ["Coaxial", "STP", "Cat 1", "Microwave"], 
-      a: 1,
-      explanation: "STP offers better noise protection due to its shielding but is more expensive than UTP."
-    },
-    { 
-      q: "Coaxial cable is most commonly associated with which service?", 
-      options: ["Telephone lines", "Cable TV", "Satellite radio", "Bluetooth"], 
-      a: 1,
-      explanation: "Coaxial cable is noted for being used in cable TV."
-    },
-    { 
-      q: "Which component is NOT part of a Coaxial cable's structure?", 
-      options: ["Inner conductor", "Insulation", "Outer shield", "Glass core"], 
-      a: 3,
-      explanation: "A Glass Core is found in Fiber-Optic cables, not Coaxial cables. Coax has an inner conductor, insulation, and outer shield."
-    },
-    { 
-      q: "Fiber-Optic cable uses what to transmit data?", 
-      options: ["Electrical pulses", "Light", "Radio waves", "Sound waves"], 
-      a: 1,
-      explanation: "Fiber-Optic cable uses light to transmit data."
-    },
-    { 
-      q: "The two main layers of a fiber-optic cable are the:", 
-      options: ["Shield and Foil", "Core and Cladding", "Copper and Insulation", "Jacket and Plastic"], 
-      a: 1,
-      explanation: "Fiber cables consist of a Core (denser) and Cladding (less dense)."
-    },
-    { 
-      q: "In fiber-optics, the Core is described as:", 
-      options: ["Less dense", "Denser than the cladding", "Made of copper", "The outer coating"], 
-      a: 1,
-      explanation: "The Core is described as the denser part, while the cladding is less dense."
-    },
-    { 
-      q: "Which is a major advantage of Fiber-Optic cable?", 
-      options: ["It is very cheap", "It is immune to electromagnetic interference", "It is easy to install", "It uses analog signals only"], 
-      a: 1,
-      explanation: "A key advantage of Fiber-Optic cable is that it is immune to electromagnetic interference."
-    },
-    { 
-      q: "Which is a disadvantage of Fiber-Optic cable?", 
-      options: ["Low bandwidth", "High signal loss", "Expensive and difficult to install", "Susceptible to noise"], 
-      a: 2,
-      explanation: "Disadvantages include being expensive and difficult to install and maintain."
-    },
-    { 
-      q: "Which guided media has the highest resistance to noise and interference?", 
-      options: ["UTP", "Coaxial", "Fiber-Optic", "Cat 3 Cable"], 
-      a: 2,
-      explanation: "Fiber-Optic is immune to electromagnetic interference, offering the highest resistance."
-    },
-    { 
-      q: "Which of the following allows for very fast data transmission over long distances?", 
-      options: ["Cat 2 UTP", "Fiber-Optic Cable", "Coaxial Cable", "Bluetooth"], 
-      a: 1,
-      explanation: "Fiber-Optic is described as very fast and supporting long distances."
-    },
-    { 
-      q: "What surrounds the inner conductor in a coaxial cable?", 
-      options: ["Metal Shield", "Insulation", "Jacket", "Glass"], 
-      a: 1,
-      explanation: "In a Coaxial cable, Insulation surrounds the inner conductor."
-    },
-    { 
-      q: "Which media type is considered 'wireless'?", 
-      options: ["STP", "Coaxial", "Unguided Media", "UTP"], 
-      a: 2,
-      explanation: "Unguided Media refers to wireless technologies like radio, microwave, and infrared."
-    },
-
-    // Section 3: Cable Categories
-    { 
-      q: "Cat 1 UTP cable is used primarily for:", 
-      options: ["100 Mbps data", "Voice only", "Gigabit Ethernet", "Video streaming"], 
-      a: 1,
-      explanation: "Cat 1 is listed as being for voice only."
-    },
-    { 
-      q: "What is the maximum speed of Cat 2 cable?", 
-      options: ["4 Mbps", "10 Mbps", "16 Mbps", "100 Mbps"], 
-      a: 0,
-      explanation: "Cat 2 supports speeds up to 4 Mbps."
-    },
-    { 
-      q: "Which category of cable supports speeds up to 10 Mbps?", 
-      options: ["Cat 1", "Cat 2", "Cat 3", "Cat 5"], 
-      a: 2,
-      explanation: "Cat 3 supports speeds up to 10 Mbps."
-    },
-    { 
-      q: "Cat 4 cable supports speeds up to:", 
-      options: ["4 Mbps", "10 Mbps", "16 Mbps", "100 Mbps"], 
-      a: 2,
-      explanation: "Cat 4 supports speeds up to 16 Mbps."
-    },
-    { 
-      q: "Which category is capable of 100 Mbps transmission?", 
-      options: ["Cat 3", "Cat 4", "Cat 5 / 5e", "Cat 1"], 
-      a: 2,
-      explanation: "Cat 5 and Cat 5e are listed as supporting up to 100 Mbps in this material."
-    },
-    { 
-      q: "Cat 6 cable supports speeds up to:", 
-      options: ["100 Mbps", "500 Mbps", "1 Gbps", "10 Gbps"], 
-      a: 2,
-      explanation: "Cat 6 supports speeds up to 1 Gbps."
-    },
-    { 
-      q: "If you need a cable for a standard home network running at 100 Mbps, which is the minimum category required?", 
-      options: ["Cat 3", "Cat 4", "Cat 5", "Cat 6"], 
-      a: 2,
-      explanation: "Cat 5 is the category listed for speeds up to 100 Mbps."
-    },
-    { 
-      q: "Which UTP category is obsolete for modern data networks but was used for Token Ring networks (16 Mbps)?", 
-      options: ["Cat 1", "Cat 2", "Cat 4", "Cat 5"], 
-      a: 2,
-      explanation: "Cat 4 is rated up to 16 Mbps."
-    },
-    { 
-      q: "The 'e' in Cat 5e typically stands for enhanced, but in terms of speed, it is grouped with Cat 5 at:", 
-      options: ["10 Mbps", "16 Mbps", "100 Mbps", "1 Gbps"], 
-      a: 2,
-      explanation: "The material groups Cat 5 / 5e together at 'up to 100 Mbps'."
-    },
-    { 
-      q: "High bandwidth and low signal loss are characteristics of:", 
-      options: ["Cat 1 Cable", "Coaxial Cable", "Fiber-Optic Cable", "Cat 2 Cable"], 
-      a: 2,
-      explanation: "High bandwidth and low signal loss are listed as advantages of Fiber-Optic Cable."
-    },
-
-    // Section 4: Network Devices
-    { 
-      q: "Which device allows a computer to physically connect to a network?", 
-      options: ["Router", "Network Adapter (NIC)", "Repeater", "Bridge"], 
-      a: 1,
-      explanation: "A Network Adapter (NIC) is hardware that allows a computer to connect to a network."
-    },
-    { 
-      q: "NIC stands for:", 
-      options: ["Network Internal Card", "Network Interface Connector", "Network Interface Controller (or Card)", "Network Internet Connection"], 
-      a: 2,
-      explanation: "NIC stands for Network Interface Card (or Controller/Adapter)."
-    },
-    { 
-      q: "Which device regenerates and strengthens signals to cover longer distances?", 
-      options: ["Repeater", "Gateway", "Modem", "Server"], 
-      a: 0,
-      explanation: "A Repeater (or Extender) regenerates and strengthens signals to cover longer distances."
-    },
-    { 
-      q: "A device that acts as a multiport repeater is called a:", 
-      options: ["Switch", "Router", "Hub", "Bridge"], 
-      a: 2,
-      explanation: "An Ethernet Hub is defined as a multiport repeater that sends incoming data to all ports."
-    },
-    { 
-      q: "How does a Hub transmit data?", 
-      options: ["It sends data only to the specific destination port", "It sends incoming data to all ports", "It filters data based on IP address", "It stores data indefinitely"], 
-      a: 1,
-      explanation: "A Hub sends incoming data to all ports, making it inefficient."
-    },
-    { 
-      q: "Which device is described as 'inefficient' because it broadcasts data to all ports?", 
-      options: ["Switch", "Router", "Hub", "Gateway"], 
-      a: 2,
-      explanation: "A Hub is described as cheap and inefficient because it sends data to all ports."
-    },
-    { 
-      q: "A Switch is smarter than a Hub because:", 
-      options: ["It is cheaper", "It uses MAC addresses to send data only to the intended device", "It connects different networks together", "It amplifies the signal more"], 
-      a: 1,
-      explanation: "A Switch sends data only to the intended device using MAC addresses, making it faster and more efficient."
-    },
-    { 
-      q: "Which address does a Switch use to filter and forward data?", 
-      options: ["IP Address", "MAC Address", "Email Address", "Web Address"], 
-      a: 1,
-      explanation: "Switches use MAC addresses to identify devices."
-    },
-    { 
-      q: "Which device converts digital signals to analog and vice versa?", 
-      options: ["Router", "Switch", "Modem", "Repeater"], 
-      a: 2,
-      explanation: "A Modem converts digital signals to analog and vice versa (modulation/demodulation)."
-    },
-    { 
-      q: "The process of converting digital to analog is called:", 
-      options: ["Demodulation", "Modulation", "Routing", "Switching"], 
-      a: 1,
-      explanation: "Modulation is the conversion of digital to analog (Demodulation is analog to digital)."
-    },
-    { 
-      q: "Which device connects multiple networks and determines the best path for data?", 
-      options: ["Hub", "Switch", "Router", "Repeater"], 
-      a: 2,
-      explanation: "A Router connects multiple networks and determines the best path for data."
-    },
-    { 
-      q: "A Gateway is used to:", 
-      options: ["Regenerate weak signals", "Connect networks with different protocols and translate data", "Connect similar network segments", "Provide wireless access"], 
-      a: 1,
-      explanation: "A Gateway connects networks with different protocols and translates data."
-    },
-    { 
-      q: "Which device connects similar network segments and filters traffic based on addresses?", 
-      options: ["Gateway", "Bridge", "Modem", "Repeater"], 
-      a: 1,
-      explanation: "A Bridge connects similar network segments and filters traffic."
-    },
-    { 
-      q: "If you need to connect a LAN to the Internet (a WAN), which device is essential?", 
-      options: ["Hub", "Switch", "Router", "Repeater"], 
-      a: 2,
-      explanation: "Routers are used to connect different networks, such as a LAN to a WAN (Internet)."
-    },
-    { 
-      q: "Which device helps avoid data collisions better than a Hub?", 
-      options: ["Repeater", "Extender", "Switch", "Coaxial Cable"], 
-      a: 2,
-      explanation: "Because a Switch sends data only to the intended recipient, it avoids the collisions common in Hubs."
-    },
-    { 
-      q: "Microwave and Infrared devices are examples of:", 
-      options: ["Guided Media devices", "Network Adapters", "Wireless transmission devices", "Cabling tools"], 
-      a: 2,
-      explanation: "Microwave and Infrared are listed under Unguided (Wireless) Media."
-    },
-    { 
-      q: "Which device functions as a 'translator' between different network architectures?", 
-      options: ["Switch", "Gateway", "Bridge", "Hub"], 
-      a: 1,
-      explanation: "Gateways translate data between networks with different protocols."
-    },
-    { 
-      q: "What does a Modem technically do to an analog signal to make it digital?", 
-      options: ["Modulates", "Demodulates", "Routes", "Repeats"], 
-      a: 1,
-      explanation: "Demodulation is the process of converting an analog signal back into a digital signal."
-    },
-    { 
-      q: "A wireless access point often acts as a bridge between:", 
-      options: ["Two WANs", "A wired network and wireless devices", "A modem and a phone line", "Two different protocols"], 
-      a: 1,
-      explanation: "Access points typically bridge the wireless devices to the wired LAN."
-    },
-    { 
-      q: "Which device would you use to extend the range of a UTP cable that is too long?", 
-      options: ["Repeater", "Modem", "Gateway", "NIC"], 
-      a: 0,
-      explanation: "A Repeater/Extender is used to regenerate signals to cover longer distances."
-    },
-
-    // Section 5: Types of Networks
-    { 
-      q: "Which network type covers a very short range, typically for personal devices?", 
-      options: ["LAN", "WAN", "PAN", "MAN"], 
-      a: 2,
-      explanation: "PAN (Personal Area Network) covers a very short range for personal devices like Bluetooth and smartphones."
-    },
-    { 
-      q: "Bluetooth connections between a phone and a headset are examples of:", 
-      options: ["LAN", "PAN", "CAN", "MAN"], 
-      a: 1,
-      explanation: "Bluetooth is a key technology for PANs (Personal Area Networks)."
-    },
-    { 
-      q: "LAN stands for:", 
-      options: ["Large Area Network", "Local Area Network", "Long Area Network", "Linked Area Network"], 
-      a: 1,
-      explanation: "LAN stands for Local Area Network."
-    },
-    { 
-      q: "A network located within a single room, building, or home is best classified as a:", 
-      options: ["WAN", "MAN", "LAN", "CAN"], 
-      a: 2,
-      explanation: "A LAN covers a small area like a room, building, or home."
-    },
-    { 
-      q: "MAN stands for:", 
-      options: ["Metropolitan Area Network", "Main Area Network", "Medium Area Network", "Massive Area Network"], 
-      a: 0,
-      explanation: "MAN stands for Metropolitan Area Network."
-    },
-    { 
-      q: "Which network type covers a city or a town?", 
-      options: ["LAN", "PAN", "MAN", "WAN"], 
-      a: 2,
-      explanation: "A MAN (Metropolitan Area Network) covers a city or town."
-    },
-    { 
-      q: "WAN stands for:", 
-      options: ["World Area Network", "Wide Area Network", "Web Area Network", "Wireless Area Network"], 
-      a: 1,
-      explanation: "WAN stands for Wide Area Network."
-    },
-    { 
-      q: "The Internet is the largest example of a:", 
-      options: ["LAN", "MAN", "WAN", "PAN"], 
-      a: 2,
-      explanation: "The Internet allows communication across countries and continents, making it the largest WAN."
-    },
-    { 
-      q: "A network specifically designed for a residential environment sharing broadband is a:", 
-      options: ["CAN", "HAN", "MAN", "WAN"], 
-      a: 1,
-      explanation: "HAN (Home Area Network) is a residential network sharing broadband."
-    },
-    { 
-      q: "CAN stands for:", 
-      options: ["City Area Network", "Campus Area Network", "Computer Area Network", "Central Area Network"], 
-      a: 1,
-      explanation: "CAN stands for Campus Area Network."
-    },
-    { 
-      q: "A university network connecting multiple buildings on a single property is a:", 
-      options: ["PAN", "HAN", "CAN", "MAN"], 
-      a: 2,
-      explanation: "A network for a school or university is classified as a CAN (Campus Area Network)."
-    },
-    { 
-      q: "Which covers a larger geographical area?", 
-      options: ["LAN", "MAN", "WAN", "PAN"], 
-      a: 2,
-      explanation: "WAN covers large areas like countries, MAN covers cities, LAN covers buildings, PAN covers personal space."
-    },
-    { 
-      q: "A network connecting branch offices in different countries would be a:", 
-      options: ["LAN", "WAN", "MAN", "CAN"], 
-      a: 1,
-      explanation: "Connecting countries requires a Wide Area Network (WAN)."
-    },
-    { 
-      q: "HAN stands for:", 
-      options: ["House Area Network", "Home Area Network", "Hybrid Area Network", "Host Area Network"], 
-      a: 1,
-      explanation: "HAN stands for Home Area Network."
-    },
-    { 
-      q: "If you connect 5 computers in a small office, you have created a:", 
-      options: ["WAN", "MAN", "LAN", "PAN"], 
-      a: 2,
-      explanation: "A small group of computers in a single location (office) is a LAN."
-    },
-
-    // Section 6: Network Architecture
-    { 
-      q: "In a Peer-to-Peer network:", 
-      options: ["There is a powerful central server", "All computers are equal", "Security is managed centrally", "It is expensive to set up"], 
-      a: 1,
-      explanation: "In Peer-to-Peer networks, there is no central server and all computers are equal."
-    },
-    { 
-      q: "Which is a characteristic of a Peer-to-Peer network?", 
-      options: ["Centralized storage", "Each computer can act as both client and server", "Requires a dedicated administrator", "Scalable to thousands of users"], 
-      a: 1,
-      explanation: "In P2P, each computer can act as client and server."
-    },
-    { 
-      q: "Which is an advantage of a Peer-to-Peer network?", 
-      options: ["High security", "Centralized backup", "Low cost and easy to configure", "Good for large networks"], 
-      a: 2,
-      explanation: "Advantages include low cost and being easy to configure."
-    },
-    { 
-      q: "Which is a disadvantage of a Peer-to-Peer network?", 
-      options: ["Dependent on a central server", "Expensive hardware", "Less secure and difficult to manage", "Requires specialized software"], 
-      a: 2,
-      explanation: "Disadvantages are that it is less secure and difficult to manage."
-    },
-    { 
-      q: "Peer-to-Peer networks are appropriate when:", 
-      options: ["There are 10 or fewer users", "Security is critical", "The network will grow rapidly", "Centralized control is needed"], 
-      a: 0,
-      explanation: "P2P is appropriate when there are 10 or fewer users and security is not critical."
-    },
-    { 
-      q: "In a Client-Server network:", 
-      options: ["All computers are peers", "A central server controls resources", "There is no central administration", "Security is low"], 
-      a: 1,
-      explanation: "In Client-Server networks, a central server controls resources."
-    },
-    { 
-      q: "Which is an advantage of a Client-Server network?", 
-      options: ["Low implementation cost", "No need for an administrator", "Centralized management and better security", "Easy for beginners to configure"], 
-      a: 2,
-      explanation: "Advantages include centralized management and better security."
-    },
-    { 
-      q: "Which is a disadvantage of a Client-Server network?", 
-      options: ["Single point of failure (the server)", "Cannot support many users", "Low data security", "Decentralized resources"], 
-      a: 0,
-      explanation: "A disadvantage is the single point of failure (the server) and high cost."
-    },
-    { 
-      q: "A Client-Server network is recommended for:", 
-      options: ["2-3 computers", "Home use only", "100+ computers", "Temporary networks"], 
-      a: 2,
-      explanation: "Client-Server supports many users and is recommended for larger networks (100+ computers)."
-    },
-    { 
-      q: "A Hybrid Network is defined as:", 
-      options: ["A network with only servers", "A network with only clients", "A combination of Peer-to-Peer and Client-Server models", "A network using only wireless media"], 
-      a: 2,
-      explanation: "A Hybrid Network is a combination of Peer-to-Peer and Client-Server models."
-    },
-    { 
-      q: "Which model requires a skilled administrator?", 
-      options: ["Stand-alone", "Peer-to-Peer", "Client-Server", "Direct Cable Connection"], 
-      a: 2,
-      explanation: "Client-Server networks require a skilled administrator."
-    },
-    { 
-      q: "In a Client-Server model, the 'Client':", 
-      options: ["Provides resources", "Requests data or services", "Manages network security", "Is the most powerful computer"], 
-      a: 1,
-      explanation: "A Client requests data or services (e.g., workstation, browser)."
-    },
-    { 
-      q: "In a Client-Server model, the 'Server':", 
-      options: ["Requests services", "Is usually a standard workstation", "Provides data or services and has higher performance", "Has no operating system"], 
-      a: 2,
-      explanation: "A Server provides data or services, has higher performance and storage, and runs a Network Operating System."
-    },
-    { 
-      q: "Which Operating System type is required for a Server?", 
-      options: ["Basic Input Output System", "Network Operating System (NOS)", "Stand-alone OS", "Mobile OS"], 
-      a: 1,
-      explanation: "Servers run a Network Operating System (NOS)."
-    },
-    { 
-      q: "If security is not critical and costs must be kept low, which architecture is best?", 
-      options: ["Client-Server", "Peer-to-Peer", "WAN", "MAN"], 
-      a: 1,
-      explanation: "Peer-to-Peer is low cost and appropriate when security is not critical."
-    },
-
-    // Section 7: Servers and Services
-    { 
-      q: "Which server type allows users to store and access files from a central location?", 
-      options: ["Printer Server", "File Server", "Database Server", "Modem"], 
-      a: 1,
-      explanation: "A File Server stores and manages files."
-    },
-    { 
-      q: "A Printer Server:", 
-      options: ["Stores emails", "Manages access to a shared printer", "Hosts web pages", "Runs applications"], 
-      a: 1,
-      explanation: "A Printer Server manages access to shared hardware like printers."
-    },
-    { 
-      q: "A server that runs specific software programs for clients is called an:", 
-      options: ["Application Server", "File Server", "Printer Server", "Message Server"], 
-      a: 0,
-      explanation: "An Application Server runs specific programs/software."
-    },
-    { 
-      q: "Which server manages emails and communication?", 
-      options: ["Database Server", "Message Server", "File Server", "Print Server"], 
-      a: 1,
-      explanation: "A Message Server manages communication services like email."
-    },
-    { 
-      q: "A Database Server:", 
-      options: ["Stores and manages large amounts of structured data", "Connects the network to the internet", "Scans documents", "Prints files"], 
-      a: 0,
-      explanation: "A Database Server stores and manages data."
-    },
-    { 
-      q: "AD DS stands for:", 
-      options: ["Advanced Data Domain System", "Active Directory Domain Services", "Active Data Distribution Server", "Automated Directory Domain Security"], 
-      a: 1,
-      explanation: "AD DS stands for Active Directory Domain Services."
-    },
-    { 
-      q: "What is the function of AD DS?", 
-      options: ["To speed up internet connection", "To manage users, computers, and resources using a centralized database", "To physically connect cables", "To act as a firewall"], 
-      a: 1,
-      explanation: "AD DS manages users, computers, and resources in a network using a centralized database."
-    },
-    { 
-      q: "A specialized high-performance computer designed to process requests and deliver data to other computers is a:", 
-      options: ["Client", "Server", "Hub", "Switch"], 
-      a: 1,
-      explanation: "This is the definition of a Server."
-    },
-    { 
-      q: "Which of the following is NOT listed as a common type of server in the reviewer?", 
-      options: ["File Server", "Gaming Server", "Database Server", "Message Server"], 
-      a: 1,
-      explanation: "Gaming Server is not listed in the common types (File, Printer, Application, Message, Database)."
-    },
-    { 
-      q: "In a network environment, a workstation that uses the services of a server is called a:", 
-      options: ["Host", "Client", "Master", "Gateway"], 
-      a: 1,
-      explanation: "A Client is the workstation that requests and uses services."
-    },
-
-    // Section 8: Topologies and Advanced
-    { 
-      q: "Which topology connects all devices to a single central cable?", 
-      options: ["Star", "Ring", "Bus", "Mesh"], 
-      a: 2,
-      explanation: "Bus Topology connects all devices to a single central cable."
-    },
-    { 
-      q: "In which topology are all devices connected to a central device like a hub or switch?", 
-      options: ["Bus", "Star", "Ring", "Mesh"], 
-      a: 1,
-      explanation: "Star Topology connects all devices to a central device (hub/switch)."
-    },
-    { 
-      q: "Which topology connects devices in a closed loop?", 
-      options: ["Star", "Bus", "Ring", "Hybrid"], 
-      a: 2,
-      explanation: "Ring Topology connects devices in a closed loop."
-    },
-    { 
-      q: "Which topology offers the highest redundancy by connecting every device to every other device?", 
-      options: ["Bus", "Star", "Mesh", "Ring"], 
-      a: 2,
-      explanation: "Mesh Topology provides high redundancy."
-    },
-    { 
-      q: "An IP Address is used to:", 
-      options: ["Identify the physical location of the computer", "Identify a device on a network", "Encrypt data", "Cool down the CPU"], 
-      a: 1,
-      explanation: "An IP Address identifies a device on a network."
-    },
-    { 
-      q: "Which of the following is a class of IP Address mentioned for review?", 
-      options: ["Class X", "Class A", "Class Z", "Class H"], 
-      a: 1,
-      explanation: "Class A, B, and C are the standard IP classes mentioned."
-    },
-    { 
-      q: "An IP address consists of a Network Address and a:", 
-      options: ["Street Address", "MAC Address", "Host Address", "Server Address"], 
-      a: 2,
-      explanation: "IP Address = Network Address + Host Address."
-    },
-    { 
-      q: "What is used to distinguish the network portion from the host portion of an IP address?", 
-      options: ["Default Gateway", "Subnet Mask", "DNS Server", "MAC Address"], 
-      a: 1,
-      explanation: "A Subnet Mask is used to identify the network and host portions."
-    },
-    { 
-      q: "IP addresses that are valid for use on the public Internet are called:", 
-      options: ["Private IP Addresses", "Public IP Addresses", "Static IP Addresses", "Dynamic IP Addresses"], 
-      a: 1,
-      explanation: "Public IP Addresses are valid on the Internet."
-    },
-    { 
-      q: "IP addresses used only within a local network and not on the internet are:", 
-      options: ["Public", "Private", "Global", "Universal"], 
-      a: 1,
-      explanation: "Private IP addresses are for local network use only."
-    },
-    { 
-      q: "An IP address that does not change is called:", 
-      options: ["Dynamic", "Static", "Private", "Public"], 
-      a: 1,
-      explanation: "Static IP addresses do not change."
-    },
-    { 
-      q: "An IP address that is automatically assigned and may change is called:", 
-      options: ["Static", "Dynamic", "Fixed", "Permanent"], 
-      a: 1,
-      explanation: "Dynamic IP addresses are automatically assigned and may change."
-    },
-    { 
-      q: "Class A, B, and C are types of:", 
-      options: ["MAC Addresses", "IP Addresses", "Email Protocols", "Cable Categories"], 
-      a: 1,
-      explanation: "These are classes of IP Addresses."
-    },
-
-    // Section 9: Mixed Review
-    { 
-      q: "If you have a network of 500 computers in a corporate building, which architecture should you use?", 
-      options: ["Peer-to-Peer", "Client-Server", "Ad-Hoc", "Direct Link"], 
-      a: 1,
-      explanation: "Client-Server is recommended for 100+ computers and supports many users."
-    },
-    { 
-      q: "A home network with 3 computers sharing a printer without a dedicated server is likely a:", 
-      options: ["Client-Server Network", "Peer-to-Peer Network", "MAN", "WAN"], 
-      a: 1,
-      explanation: "Peer-to-Peer is recommended for 10 or fewer users, especially in homes without a central server."
-    },
-    { 
-      q: "Which device would be most effective to reduce network traffic congestion compared to a hub?", 
-      options: ["Repeater", "Switch", "Amplifier", "Connector"], 
-      a: 1,
-      explanation: "A Switch is more efficient than a hub because it sends data only to the intended recipient."
-    },
-    { 
-      q: "You need to connect two office buildings in the same city. This is a:", 
-      options: ["PAN", "LAN", "MAN", "WAN"], 
-      a: 2,
-      explanation: "A network covering a city or town is a MAN (Metropolitan Area Network)."
-    },
-    { 
-      q: "Which cable is most appropriate for a noisy factory environment due to its shield?", 
-      options: ["UTP", "STP", "Cat 1", "Unshielded Coaxial"], 
-      a: 1,
-      explanation: "STP (Shielded Twisted Pair) has a foil shield for better noise protection."
-    },
-    { 
-      q: "To connect a home network to an Internet Service Provider (ISP) via telephone line, you need a:", 
-      options: ["Switch", "Hub", "Modem", "Repeater"], 
-      a: 2,
-      explanation: "A Modem converts the digital network signal to the analog signal used by phone lines."
-    },
-    { 
-      q: "Which feature allows a network administrator to control user access from one location?", 
-      options: ["Peer-to-Peer configuration", "Centralized Management (Client-Server)", "Stand-alone setup", "Unshielded cabling"], 
-      a: 1,
-      explanation: "Centralized management is a key advantage of Client-Server networks."
-    },
-    { 
-      q: "Immune to electromagnetic interference' is a key characteristic of:", 
-      options: ["Copper wire", "Fiber-Optic cable", "UTP", "Coaxial"], 
-      a: 1,
-      explanation: "Fiber-optic cable transmits light, making it immune to electrical interference."
-    },
-    { 
-      q: "Which is NOT a listed disadvantage of Fiber-Optic cable?", 
-      options: ["Expensive", "Difficult installation", "High signal loss", "Difficult maintenance"], 
-      a: 2,
-      explanation: "High signal loss is INCORRECT; Fiber has LOW signal loss (which is an advantage)."
-    },
-    { 
-      q: "The 'Host Address' part of an IP Address identifies:", 
-      options: ["The specific device on the network", "The network itself", "The router", "The country"], 
-      a: 0,
-      explanation: "The Host Address identifies the specific device/host within the network."
-    },
-    { 
-      q: "Which device operates using MAC addresses?", 
-      options: ["Hub", "Repeater", "Switch", "Passive Hub"], 
-      a: 2,
-      explanation: "Switches use MAC addresses to forward data to the correct device."
-    },
-    { 
-      q: "A 'Stand-Alone Computer' differs from a networked computer because:", 
-      options: ["It has no CPU", "It is not connected to other computers", "It cannot run software", "It is always faster"], 
-      a: 1,
-      explanation: "The definition of a Stand-Alone computer is one that is not connected to any network."
-    },
-    { 
-      q: "Which medium uses 'Cladding'?", 
-      options: ["Coaxial", "UTP", "Fiber-Optic", "STP"], 
-      a: 2,
-      explanation: "Cladding is the outer layer of the glass/plastic core in a Fiber-Optic cable."
-    },
-    { 
-      q: "Cat 5e cable supports speeds up to:", 
-      options: ["10 Mbps", "100 Mbps", "10 Gbps", "100 Gbps"], 
-      a: 1,
-      explanation: "The material states Cat 5 / 5e supports up to 100 Mbps."
-    },
-    { 
-      q: "A computer that provides resources to other computers is a:", 
-      options: ["Client", "Server", "Terminal", "Guest"], 
-      a: 1,
-      explanation: "A Server provides data or services."
-    },
-    { 
-      q: "Which is faster?", 
-      options: ["Cat 3", "Cat 5", "Cat 6", "Cat 4"], 
-      a: 2,
-      explanation: "Cat 6 (1 Gbps) is faster than Cat 5 (100 Mbps), Cat 4 (16 Mbps), and Cat 3 (10 Mbps)."
-    },
-    { 
-      q: "Which network type is used for a school campus?", 
-      options: ["PAN", "CAN", "HAN", "WAN"], 
-      a: 1,
-      explanation: "CAN stands for Campus Area Network."
-    },
-    { 
-      q: "Which device translates protocols between different networks?", 
-      options: ["Gateway", "Hub", "Switch", "Repeater"], 
-      a: 0,
-      explanation: "A Gateway connects networks with different protocols and translates data."
-    },
-    { 
-      q: "Network adapters are also known as:", 
-      options: ["NICs", "NOCs", "NACs", "NECs"], 
-      a: 0,
-      explanation: "Network Adapter is synonymous with NIC (Network Interface Card)."
-    },
-    { 
-      q: "Which topology is known for having a single point of failure if the central node breaks?", 
-      options: ["Bus", "Star", "Mesh", "Ring"], 
-      a: 1,
-      explanation: "In a Star topology, if the central hub/switch fails, the whole network fails."
-    },
-    { 
-      q: "Modulation' turns:", 
-      options: ["Analog to Digital", "Digital to Analog", "Light to Electrical", "Electrical to Light"], 
-      a: 1,
-      explanation: "Modulation converts Digital signals to Analog."
-    },
-    { 
-      q: "Demodulation' turns:", 
-      options: ["Analog to Digital", "Digital to Analog", "Light to Sound", "Sound to Light"], 
-      a: 0,
-      explanation: "Demodulation converts Analog signals back to Digital."
-    },
-    { 
-      q: "Which server stores user accounts in a domain?", 
-      options: ["File Server", "Print Server", "AD DS (Domain Controller)", "Web Server"], 
-      a: 2,
-      explanation: "AD DS (Active Directory Domain Services) manages users and computers."
-    },
-    { 
-      q: "Which cable is used for Cable TV?", 
-      options: ["UTP", "Fiber", "Coaxial", "STP"], 
-      a: 2,
-      explanation: "Coaxial cable is commonly used for Cable TV."
-    },
-    { 
-      q: "Which UTP category is for 'Voice Only'?", 
-      options: ["Cat 1", "Cat 2", "Cat 3", "Cat 5"], 
-      a: 0,
-      explanation: "Cat 1 is for voice only."
-    },
-    { 
-      q: "Which device forwards data to *all* connected ports?", 
-      options: ["Switch", "Router", "Hub", "Bridge"], 
-      a: 2,
-      explanation: "A Hub sends incoming data to all ports (inefficient)."
-    },
-    { 
-      q: "Which network model creates a 'single point of failure' at the server?", 
-      options: ["Peer-to-Peer", "Client-Server", "Ad-Hoc", "Direct"], 
-      a: 1,
-      explanation: "Client-Server networks have a single point of failure: the central server."
-    },
-    { 
-      q: "WANs often use which transmission medium for long distances?", 
-      options: ["Bluetooth", "Infrared", "Fiber-Optics or Satellites", "Cat 3 Cable"], 
-      a: 2,
-      explanation: "WANs cover large areas and often use fiber-optics or satellites."
-    },
-    { 
-      q: "A 'Message Server' is primarily responsible for:", 
-      options: ["Printing", "Email", "Files", "Databases"], 
-      a: 1,
-      explanation: "Message Servers manage email and communication."
-    },
-    { 
-      q: "Private IP addresses are used for:", 
-      options: ["The entire Internet", "Internal Local Networks (LANs)", "Websites like Google", "Public servers"], 
-      a: 1,
-      explanation: "Private IP addresses are used internally within a Local Area Network (LAN)."
-    },
-    { 
-      q: "Which is NOT a guided media?", 
-      options: ["Microwave", "Coaxial", "Fiber", "Twisted Pair"], 
-      a: 0,
-      explanation: "Microwave is a wireless (Unguided) medium."
-    },
-    { 
-      q: "Low cost' is an advantage of:", 
-      options: ["Fiber Optics", "Client-Server Networks", "Peer-to-Peer Networks", "WANs"], 
-      a: 2,
-      explanation: "Peer-to-Peer networks are low cost and easy to configure."
-    },
-    { 
-      q: "Centralized Backups' are easier in:", 
-      options: ["Peer-to-Peer", "Client-Server", "Stand-alone PCs", "Ad-hoc networks"], 
-      a: 1,
-      explanation: "Client-Server networks allow for centralized management and backups."
-    },
-    { 
-      q: "A 'Bridge' connects:", 
-      options: ["Different protocols", "Similar network segments", "A computer to a printer", "A keyboard to a mouse"], 
-      a: 1,
-      explanation: "A Bridge connects similar network segments."
-    },
-    { 
-      q: "Which topology requires the most cabling?", 
-      options: ["Bus", "Star", "Mesh", "Ring"], 
-      a: 2,
-      explanation: "Mesh topology requires every device to connect to every other device, using the most cabling."
-    },
-    { 
-      q: "The outer layer of a coaxial cable is the:", 
-      options: ["Conductor", "Insulation", "Shield/Jacket", "Core"], 
-      a: 2,
-      explanation: "The outer layer is the shield/jacket."
-    },
-    { 
-      q: "Networking allows 'Simultaneous access to data,' which means:", 
-      options: ["Only one person can open a file", "Multiple users can use data at the same time", "Data is deleted after use", "Data is printed automatically"], 
-      a: 1,
-      explanation: "Simultaneous access means multiple users can work on the same data at the same time."
-    },
-  ];
-
-  const handleAnswer = (questionIndex, optionIndex) => {
-    if (userAnswers[questionIndex] !== undefined) return; // Prevent re-answering
-    setUserAnswers({
-      ...userAnswers,
-      [questionIndex]: optionIndex
-    });
-  };
-
-  const resetReviewer = () => {
-    if (confirm("Are you sure you want to reset all progress?")) {
-      setUserAnswers({});
-      window.scrollTo(0, 0);
-    }
-  };
-
-  const score = Object.keys(userAnswers).reduce((acc, key) => {
-    return userAnswers[key] === questions[key].a ? acc + 1 : acc;
-  }, 0);
-
-  const filteredQuestions = useMemo(() => {
-    return questions.map((q, i) => ({...q, originalIndex: i})).filter(q => 
-      q.q.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-  }, [questions, searchTerm]);
-
-  return (
-    <div className="min-h-screen bg-gray-50 text-gray-800 font-sans">
-      {/* Sticky Header */}
-      <div className="sticky top-0 z-10 bg-white shadow-md border-b border-gray-200">
-        <div className="max-w-4xl mx-auto px-4 py-3 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="flex items-center space-x-2">
-            <div className="bg-blue-600 p-2 rounded-lg">
-              <Trophy className="w-5 h-5 text-white" />
-            </div>
-            <div>
-              <h1 className="text-lg font-bold text-gray-900 leading-tight">NetReviewer <span className="text-blue-600">Pro</span></h1>
-              <p className="text-xs text-gray-500">Introduction to Networking</p>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-4 w-full sm:w-auto">
-             <div className="relative flex-grow sm:flex-grow-0">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-                <input 
-                  type="text" 
-                  placeholder="Search questions..." 
-                  className="pl-9 pr-4 py-1.5 bg-gray-100 border-transparent focus:bg-white focus:border-blue-500 rounded-full text-sm w-full sm:w-48 transition-all outline-none border"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                />
-             </div>
-
-            <div className="flex items-center gap-3 bg-gray-100 px-3 py-1.5 rounded-full">
-              <span className="text-sm font-semibold">
-                Score: <span className="text-blue-600">{score}</span> / {Object.keys(userAnswers).length}
-              </span>
-            </div>
-            
-            <button 
-              onClick={resetReviewer}
-              className="p-2 hover:bg-gray-100 rounded-full text-gray-600 transition-colors"
-              title="Reset All"
-            >
-              <RotateCcw className="w-5 h-5" />
-            </button>
-          </div>
-        </div>
-      </div>
-
-      {/* Main Content */}
-      <div className="max-w-3xl mx-auto px-4 py-8 space-y-6">
-        {filteredQuestions.length === 0 ? (
-           <div className="text-center py-20 text-gray-400">
-             <p>No questions found matching "{searchTerm}"</p>
-           </div>
-        ) : (
-          filteredQuestions.map((item, index) => {
-            const qIndex = item.originalIndex;
-            const isAnswered = userAnswers[qIndex] !== undefined;
-            const isCorrect = userAnswers[qIndex] === item.a;
-            
-            return (
-              <div 
-                key={qIndex} 
-                className={`bg-white rounded-xl shadow-sm border transition-all duration-300 ${isAnswered ? (isCorrect ? 'border-green-200 shadow-green-50' : 'border-red-200 shadow-red-50') : 'border-gray-200 hover:shadow-md'}`}
-              >
-                <div className="p-6">
-                  <div className="flex justify-between items-start mb-4">
-                    <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">Question {qIndex + 1}</span>
-                    {isAnswered && (
-                      isCorrect ? 
-                      <span className="flex items-center text-green-600 text-sm font-medium"><CheckCircle className="w-4 h-4 mr-1"/> Correct</span> : 
-                      <span className="flex items-center text-red-500 text-sm font-medium"><XCircle className="w-4 h-4 mr-1"/> Incorrect</span>
-                    )}
-                  </div>
-                  
-                  <h3 className="text-lg font-semibold text-gray-800 mb-6 leading-relaxed">
-                    {item.q}
-                  </h3>
-
-                  <div className="space-y-3">
-                    {item.options.map((option, optIndex) => {
-                      let btnClass = "w-full text-left p-4 rounded-lg border-2 transition-all duration-200 flex items-center justify-between group ";
-                      
-                      if (isAnswered) {
-                        if (optIndex === item.a) {
-                          // Correct Answer (Always Green)
-                          btnClass += "bg-green-50 border-green-500 text-green-800";
-                        } else if (optIndex === userAnswers[qIndex]) {
-                          // User Selected Wrong Answer (Red)
-                          btnClass += "bg-red-50 border-red-500 text-red-800";
-                        } else {
-                          // Other Unselected Options
-                          btnClass += "bg-gray-50 border-transparent text-gray-400 opacity-60";
-                        }
-                      } else {
-                        // Default State
-                        btnClass += "bg-white border-gray-100 hover:border-blue-400 hover:bg-blue-50 text-gray-600";
-                      }
-
-                      return (
-                        <button
-                          key={optIndex}
-                          onClick={() => handleAnswer(qIndex, optIndex)}
-                          disabled={isAnswered}
-                          className={btnClass}
-                        >
-                          <span className="flex items-center gap-3">
-                            <span className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold border ${
-                              isAnswered && optIndex === item.a ? 'bg-green-500 border-green-500 text-white' : 
-                              isAnswered && optIndex === userAnswers[qIndex] ? 'bg-red-500 border-red-500 text-white' : 
-                              'bg-gray-100 border-gray-300 text-gray-500 group-hover:border-blue-400 group-hover:text-blue-500'
-                            }`}>
-                              {String.fromCharCode(65 + optIndex)}
-                            </span>
-                            {option}
-                          </span>
-                          
-                          {isAnswered && optIndex === item.a && (
-                            <CheckCircle className="w-5 h-5 text-green-600" />
-                          )}
-                          {isAnswered && optIndex === userAnswers[qIndex] && optIndex !== item.a && (
-                            <XCircle className="w-5 h-5 text-red-500" />
-                          )}
-                        </button>
-                      );
-                    })}
-                  </div>
-
-                  {/* Explanation Section */}
-                  {isAnswered && item.explanation && (
-                    <div className={`mt-6 p-4 rounded-lg flex gap-3 text-sm leading-relaxed animate-fade-in ${isCorrect ? 'bg-blue-50 text-blue-900 border border-blue-100' : 'bg-orange-50 text-orange-900 border border-orange-100'}`}>
-                      <div className="flex-shrink-0 mt-0.5">
-                        {isCorrect ? <BookOpen className="w-5 h-5 text-blue-500" /> : <AlertCircle className="w-5 h-5 text-orange-500" />}
-                      </div>
-                      <div>
-                        <span className="font-bold block mb-1">{isCorrect ? 'Explanation:' : 'Why that\'s incorrect:'}</span>
-                        {item.explanation}
-                      </div>
-                    </div>
-                  )}
-
+    <!-- Sticky Header -->
+    <div class="sticky top-0 z-10 bg-white shadow-md border-b border-gray-200">
+        <div class="max-w-4xl mx-auto px-4 py-3 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div class="flex items-center space-x-2">
+                <div class="bg-blue-600 p-2 rounded-lg">
+                    <i data-lucide="trophy" class="w-5 h-5 text-white"></i>
                 </div>
-              </div>
-            );
-          })
-        )}
-      </div>
-      
-      {/* Footer */}
-      <div className="bg-white border-t border-gray-200 mt-8 py-8 text-center text-gray-400 text-sm">
-        <p>Networking Reviewer • Based on Provided Material</p>
-      </div>
-    </div>
-  );
-};
+                <div>
+                    <h1 class="text-lg font-bold text-gray-900 leading-tight">NetReviewer <span class="text-blue-600">Pro</span></h1>
+                    <p class="text-xs text-gray-500">Introduction to Networking</p>
+                </div>
+            </div>
 
-export default NetworkingReviewer;
+            <div class="flex items-center gap-4 w-full sm:w-auto">
+                <div class="relative flex-grow sm:flex-grow-0">
+                    <i data-lucide="search" class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4"></i>
+                    <input 
+                        type="text" 
+                        id="searchInput"
+                        placeholder="Search questions..." 
+                        class="pl-9 pr-4 py-1.5 bg-gray-100 border-transparent focus:bg-white focus:border-blue-500 rounded-full text-sm w-full sm:w-48 transition-all outline-none border"
+                        oninput="handleSearch(this.value)"
+                    />
+                </div>
+
+                <div class="flex items-center gap-3 bg-gray-100 px-3 py-1.5 rounded-full whitespace-nowrap">
+                    <span class="text-sm font-semibold">
+                        Score: <span id="scoreDisplay" class="text-blue-600">0</span> / <span id="answeredDisplay">0</span>
+                    </span>
+                </div>
+                
+                <button 
+                    onclick="resetReviewer()"
+                    class="p-2 hover:bg-gray-100 rounded-full text-gray-600 transition-colors"
+                    title="Reset All"
+                >
+                    <i data-lucide="rotate-ccw" class="w-5 h-5"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div id="questionsContainer" class="max-w-3xl mx-auto px-4 py-8 space-y-6">
+        <!-- Questions will be injected here via JavaScript -->
+    </div>
+
+    <!-- Footer -->
+    <div class="bg-white border-t border-gray-200 mt-8 py-8 text-center text-gray-400 text-sm">
+        <p>Networking Reviewer • Based on Provided Material</p>
+    </div>
+
+    <script>
+        // --- Data: 150 Questions ---
+        const questions = [
+            // Section 1: Computer Network Fundamentals
+            { 
+              q: "What is defined as a group of two or more computers connected together to share resources?", 
+              options: ["Stand-Alone Computer", "Computer Network", "Server Farm", "Workstation"], 
+              a: 1,
+              explanation: "A Computer Network is defined as a group of two or more computers connected together to communicate and share resources such as data, files, hardware, software, and internet."
+            },
+            { 
+              q: "A computer that uses only its local programs and data and is not connected to any network is called a:", 
+              options: ["Network Client", "Server", "Stand-Alone Computer", "Terminal"], 
+              a: 2,
+              explanation: "A Stand-Alone Computer uses only its local programs and data and is not connected to any network."
+            },
+            { 
+              q: "Which of the following is NOT a primary benefit of networking mentioned in the material?", 
+              options: ["Sharing of hardware", "Enhanced communication", "Increased individual computer processing speed", "Data security and management"], 
+              a: 2,
+              explanation: "The benefits listed include sharing of info, programs, hardware, data security, simultaneous access, internet sharing, and enhanced communication. Processing speed is not listed."
+            },
+            { 
+              q: "Sharing a printer among multiple office workers is an example of:", 
+              options: ["Software Sharing", "Hardware Sharing", "Internet Access Sharing", "Data Management"], 
+              a: 1,
+              explanation: "Sharing a printer, scanner, or storage devices is classified as Sharing of Hardware."
+            },
+            { 
+              q: "Which benefit of networking allows multiple users to work on the same data at the same time?", 
+              options: ["Enhanced communication", "Simultaneous access to data", "Hardware sharing", "Internet access sharing"], 
+              a: 1,
+              explanation: "Simultaneous access to data allows multiple users to access and work on the same files or database records at the same time."
+            },
+            { 
+              q: "What are the two main requirements to transfer data over a network?", 
+              options: ["Internet and Modem", "Transmission Medium and Transmitting/Receiving Devices", "Router and Switch", "Server and Client"], 
+              a: 1,
+              explanation: "To transfer data, two things are required: a Transmission Medium (to carry the signal) and Transmitting/Receiving Devices (to send/receive the signal)."
+            },
+            { 
+              q: "The physical path that carries the signal in a network is known as the:", 
+              options: ["Transmitting Device", "Network Adapter", "Transmission Medium", "Gateway"], 
+              a: 2,
+              explanation: "The Transmission Medium is the component that carries the signal from one device to another."
+            },
+            { 
+              q: "Which of the following is an example of 'Enhanced Communication' in networking?", 
+              options: ["Printing a document", "Saving a file to a flash drive", "Sending an email with attachments", "Scanning a photo"], 
+              a: 2,
+              explanation: "Enhanced communication includes services like email and file attachments."
+            },
+            { 
+              q: "What type of resource is Microsoft Word when accessed from a central server by multiple clients?", 
+              options: ["Hardware resource", "Software/Program resource", "Internet resource", "External resource"], 
+              a: 1,
+              explanation: "Sharing of programs and software allows applications to be run from a network server."
+            },
+            { 
+              q: "Data security and management is listed as a:", 
+              options: ["Disadvantage of networking", "Benefit of networking", "Type of cable", "Network device"], 
+              a: 1,
+              explanation: "Data security and management is explicitly listed as a Benefit of Networking."
+            },
+            // Section 2: Transmission Media
+            { 
+              q: "Which category of transmission media uses physical cables or wires?", 
+              options: ["Unguided Media", "Guided Media", "Wireless Media", "Radiowave Media"], 
+              a: 1,
+              explanation: "Guided Media uses physical cables or wires to transmit data."
+            },
+            { 
+              q: "Unguided media refers to:", 
+              options: ["Fiber-optic cables", "Wireless transmission (radio, microwave, infrared)", "Coaxial cables", "Copper wires"], 
+              a: 1,
+              explanation: "Unguided Media is wireless and includes radio, microwave, and infrared transmission."
+            },
+            { 
+              q: "Which of the following is NOT a type of guided media?", 
+              options: ["Unshielded Twisted Pair (UTP)", "Microwave", "Coaxial Cable", "Fiber-Optic Cable"], 
+              a: 1,
+              explanation: "Microwave is a form of Unguided (wireless) media. UTP, Coax, and Fiber are Guided (wired)."
+            },
+            { 
+              q: "What is the primary purpose of twisting the wires in a Twisted Pair cable?", 
+              options: ["To make the cable stronger", "To reduce electromagnetic interference", "To increase the length of the cable", "To make it easier to cut"], 
+              a: 1,
+              explanation: "Twisting the wires together reduces electromagnetic interference (noise)."
+            },
+            { 
+              q: "What does UTP stand for?", 
+              options: ["Universal Twisted Pair", "Uniform Transfer Protocol", "Unshielded Twisted Pair", "Ultra Transmission Path"], 
+              a: 2,
+              explanation: "UTP stands for Unshielded Twisted Pair."
+            },
+            { 
+              q: "What is the main difference between UTP and STP?", 
+              options: ["UTP is faster", "STP has a metal foil or braided shield", "STP is cheaper", "UTP uses light to transmit data"], 
+              a: 1,
+              explanation: "STP (Shielded Twisted Pair) has a metal foil or braided shield for better noise protection, whereas UTP does not."
+            },
+            { 
+              q: "Which cable type is described as being covered with plastic, cheap, and commonly used?", 
+              options: ["STP", "Coaxial", "UTP", "Fiber-Optic"], 
+              a: 2,
+              explanation: "UTP is described as having no shielding, being covered with plastic, cheap, and commonly used."
+            },
+            { 
+              q: "STP stands for:", 
+              options: ["Shielded Twisted Pair", "Standard Twisted Pair", "Secure Transmission Protocol", "Signal Transfer Point"], 
+              a: 0,
+              explanation: "STP stands for Shielded Twisted Pair."
+            },
+            { 
+              q: "Which cable type provides better noise protection but is more expensive than UTP?", 
+              options: ["Coaxial", "STP", "Cat 1", "Microwave"], 
+              a: 1,
+              explanation: "STP offers better noise protection due to its shielding but is more expensive than UTP."
+            },
+            { 
+              q: "Coaxial cable is most commonly associated with which service?", 
+              options: ["Telephone lines", "Cable TV", "Satellite radio", "Bluetooth"], 
+              a: 1,
+              explanation: "Coaxial cable is noted for being used in cable TV."
+            },
+            { 
+              q: "Which component is NOT part of a Coaxial cable's structure?", 
+              options: ["Inner conductor", "Insulation", "Outer shield", "Glass core"], 
+              a: 3,
+              explanation: "A Glass Core is found in Fiber-Optic cables, not Coaxial cables. Coax has an inner conductor, insulation, and outer shield."
+            },
+            { 
+              q: "Fiber-Optic cable uses what to transmit data?", 
+              options: ["Electrical pulses", "Light", "Radio waves", "Sound waves"], 
+              a: 1,
+              explanation: "Fiber-Optic cable uses light to transmit data."
+            },
+            { 
+              q: "The two main layers of a fiber-optic cable are the:", 
+              options: ["Shield and Foil", "Core and Cladding", "Copper and Insulation", "Jacket and Plastic"], 
+              a: 1,
+              explanation: "Fiber cables consist of a Core (denser) and Cladding (less dense)."
+            },
+            { 
+              q: "In fiber-optics, the Core is described as:", 
+              options: ["Less dense", "Denser than the cladding", "Made of copper", "The outer coating"], 
+              a: 1,
+              explanation: "The Core is described as the denser part, while the cladding is less dense."
+            },
+            { 
+              q: "Which is a major advantage of Fiber-Optic cable?", 
+              options: ["It is very cheap", "It is immune to electromagnetic interference", "It is easy to install", "It uses analog signals only"], 
+              a: 1,
+              explanation: "A key advantage of Fiber-Optic cable is that it is immune to electromagnetic interference."
+            },
+            { 
+              q: "Which is a disadvantage of Fiber-Optic cable?", 
+              options: ["Low bandwidth", "High signal loss", "Expensive and difficult to install", "Susceptible to noise"], 
+              a: 2,
+              explanation: "Disadvantages include being expensive and difficult to install and maintain."
+            },
+            { 
+              q: "Which guided media has the highest resistance to noise and interference?", 
+              options: ["UTP", "Coaxial", "Fiber-Optic", "Cat 3 Cable"], 
+              a: 2,
+              explanation: "Fiber-Optic is immune to electromagnetic interference, offering the highest resistance."
+            },
+            { 
+              q: "Which of the following allows for very fast data transmission over long distances?", 
+              options: ["Cat 2 UTP", "Fiber-Optic Cable", "Coaxial Cable", "Bluetooth"], 
+              a: 1,
+              explanation: "Fiber-Optic is described as very fast and supporting long distances."
+            },
+            { 
+              q: "What surrounds the inner conductor in a coaxial cable?", 
+              options: ["Metal Shield", "Insulation", "Jacket", "Glass"], 
+              a: 1,
+              explanation: "In a Coaxial cable, Insulation surrounds the inner conductor."
+            },
+            { 
+              q: "Which media type is considered 'wireless'?", 
+              options: ["STP", "Coaxial", "Unguided Media", "UTP"], 
+              a: 2,
+              explanation: "Unguided Media refers to wireless technologies like radio, microwave, and infrared."
+            },
+            // Section 3: Cable Categories
+            { 
+              q: "Cat 1 UTP cable is used primarily for:", 
+              options: ["100 Mbps data", "Voice only", "Gigabit Ethernet", "Video streaming"], 
+              a: 1,
+              explanation: "Cat 1 is listed as being for voice only."
+            },
+            { 
+              q: "What is the maximum speed of Cat 2 cable?", 
+              options: ["4 Mbps", "10 Mbps", "16 Mbps", "100 Mbps"], 
+              a: 0,
+              explanation: "Cat 2 supports speeds up to 4 Mbps."
+            },
+            { 
+              q: "Which category of cable supports speeds up to 10 Mbps?", 
+              options: ["Cat 1", "Cat 2", "Cat 3", "Cat 5"], 
+              a: 2,
+              explanation: "Cat 3 supports speeds up to 10 Mbps."
+            },
+            { 
+              q: "Cat 4 cable supports speeds up to:", 
+              options: ["4 Mbps", "10 Mbps", "16 Mbps", "100 Mbps"], 
+              a: 2,
+              explanation: "Cat 4 supports speeds up to 16 Mbps."
+            },
+            { 
+              q: "Which category is capable of 100 Mbps transmission?", 
+              options: ["Cat 3", "Cat 4", "Cat 5 / 5e", "Cat 1"], 
+              a: 2,
+              explanation: "Cat 5 and Cat 5e are listed as supporting up to 100 Mbps in this material."
+            },
+            { 
+              q: "Cat 6 cable supports speeds up to:", 
+              options: ["100 Mbps", "500 Mbps", "1 Gbps", "10 Gbps"], 
+              a: 2,
+              explanation: "Cat 6 supports speeds up to 1 Gbps."
+            },
+            { 
+              q: "If you need a cable for a standard home network running at 100 Mbps, which is the minimum category required?", 
+              options: ["Cat 3", "Cat 4", "Cat 5", "Cat 6"], 
+              a: 2,
+              explanation: "Cat 5 is the category listed for speeds up to 100 Mbps."
+            },
+            { 
+              q: "Which UTP category is obsolete for modern data networks but was used for Token Ring networks (16 Mbps)?", 
+              options: ["Cat 1", "Cat 2", "Cat 4", "Cat 5"], 
+              a: 2,
+              explanation: "Cat 4 is rated up to 16 Mbps."
+            },
+            { 
+              q: "The 'e' in Cat 5e typically stands for enhanced, but in terms of speed, it is grouped with Cat 5 at:", 
+              options: ["10 Mbps", "16 Mbps", "100 Mbps", "1 Gbps"], 
+              a: 2,
+              explanation: "The material groups Cat 5 / 5e together at 'up to 100 Mbps'."
+            },
+            { 
+              q: "High bandwidth and low signal loss are characteristics of:", 
+              options: ["Cat 1 Cable", "Coaxial Cable", "Fiber-Optic Cable", "Cat 2 Cable"], 
+              a: 2,
+              explanation: "High bandwidth and low signal loss are listed as advantages of Fiber-Optic Cable."
+            },
+            // Section 4: Network Devices
+            { 
+              q: "Which device allows a computer to physically connect to a network?", 
+              options: ["Router", "Network Adapter (NIC)", "Repeater", "Bridge"], 
+              a: 1,
+              explanation: "A Network Adapter (NIC) is hardware that allows a computer to connect to a network."
+            },
+            { 
+              q: "NIC stands for:", 
+              options: ["Network Internal Card", "Network Interface Connector", "Network Interface Controller (or Card)", "Network Internet Connection"], 
+              a: 2,
+              explanation: "NIC stands for Network Interface Card (or Controller/Adapter)."
+            },
+            { 
+              q: "Which device regenerates and strengthens signals to cover longer distances?", 
+              options: ["Repeater", "Gateway", "Modem", "Server"], 
+              a: 0,
+              explanation: "A Repeater (or Extender) regenerates and strengthens signals to cover longer distances."
+            },
+            { 
+              q: "A device that acts as a multiport repeater is called a:", 
+              options: ["Switch", "Router", "Hub", "Bridge"], 
+              a: 2,
+              explanation: "An Ethernet Hub is defined as a multiport repeater that sends incoming data to all ports."
+            },
+            { 
+              q: "How does a Hub transmit data?", 
+              options: ["It sends data only to the specific destination port", "It sends incoming data to all ports", "It filters data based on IP address", "It stores data indefinitely"], 
+              a: 1,
+              explanation: "A Hub sends incoming data to all ports, making it inefficient."
+            },
+            { 
+              q: "Which device is described as 'inefficient' because it broadcasts data to all ports?", 
+              options: ["Switch", "Router", "Hub", "Gateway"], 
+              a: 2,
+              explanation: "A Hub is described as cheap and inefficient because it sends data to all ports."
+            },
+            { 
+              q: "A Switch is smarter than a Hub because:", 
+              options: ["It is cheaper", "It uses MAC addresses to send data only to the intended device", "It connects different networks together", "It amplifies the signal more"], 
+              a: 1,
+              explanation: "A Switch sends data only to the intended device using MAC addresses, making it faster and more efficient."
+            },
+            { 
+              q: "Which address does a Switch use to filter and forward data?", 
+              options: ["IP Address", "MAC Address", "Email Address", "Web Address"], 
+              a: 1,
+              explanation: "Switches use MAC addresses to identify devices."
+            },
+            { 
+              q: "Which device converts digital signals to analog and vice versa?", 
+              options: ["Router", "Switch", "Modem", "Repeater"], 
+              a: 2,
+              explanation: "A Modem converts digital signals to analog and vice versa (modulation/demodulation)."
+            },
+            { 
+              q: "The process of converting digital to analog is called:", 
+              options: ["Demodulation", "Modulation", "Routing", "Switching"], 
+              a: 1,
+              explanation: "Modulation is the conversion of digital to analog (Demodulation is analog to digital)."
+            },
+            { 
+              q: "Which device connects multiple networks and determines the best path for data?", 
+              options: ["Hub", "Switch", "Router", "Repeater"], 
+              a: 2,
+              explanation: "A Router connects multiple networks and determines the best path for data."
+            },
+            { 
+              q: "A Gateway is used to:", 
+              options: ["Regenerate weak signals", "Connect networks with different protocols and translate data", "Connect similar network segments", "Provide wireless access"], 
+              a: 1,
+              explanation: "A Gateway connects networks with different protocols and translates data."
+            },
+            { 
+              q: "Which device connects similar network segments and filters traffic based on addresses?", 
+              options: ["Gateway", "Bridge", "Modem", "Repeater"], 
+              a: 1,
+              explanation: "A Bridge connects similar network segments and filters traffic."
+            },
+            { 
+              q: "If you need to connect a LAN to the Internet (a WAN), which device is essential?", 
+              options: ["Hub", "Switch", "Router", "Repeater"], 
+              a: 2,
+              explanation: "Routers are used to connect different networks, such as a LAN to a WAN (Internet)."
+            },
+            { 
+              q: "Which device helps avoid data collisions better than a Hub?", 
+              options: ["Repeater", "Extender", "Switch", "Coaxial Cable"], 
+              a: 2,
+              explanation: "Because a Switch sends data only to the intended recipient, it avoids the collisions common in Hubs."
+            },
+            { 
+              q: "Microwave and Infrared devices are examples of:", 
+              options: ["Guided Media devices", "Network Adapters", "Wireless transmission devices", "Cabling tools"], 
+              a: 2,
+              explanation: "Microwave and Infrared are listed under Unguided (Wireless) Media."
+            },
+            { 
+              q: "Which device functions as a 'translator' between different network architectures?", 
+              options: ["Switch", "Gateway", "Bridge", "Hub"], 
+              a: 1,
+              explanation: "Gateways translate data between networks with different protocols."
+            },
+            { 
+              q: "What does a Modem technically do to an analog signal to make it digital?", 
+              options: ["Modulates", "Demodulates", "Routes", "Repeats"], 
+              a: 1,
+              explanation: "Demodulation is the process of converting an analog signal back into a digital signal."
+            },
+            { 
+              q: "A wireless access point often acts as a bridge between:", 
+              options: ["Two WANs", "A wired network and wireless devices", "A modem and a phone line", "Two different protocols"], 
+              a: 1,
+              explanation: "Access points typically bridge the wireless devices to the wired LAN."
+            },
+            { 
+              q: "Which device would you use to extend the range of a UTP cable that is too long?", 
+              options: ["Repeater", "Modem", "Gateway", "NIC"], 
+              a: 0,
+              explanation: "A Repeater/Extender is used to regenerate signals to cover longer distances."
+            },
+            // Section 5: Types of Networks
+            { 
+              q: "Which network type covers a very short range, typically for personal devices?", 
+              options: ["LAN", "WAN", "PAN", "MAN"], 
+              a: 2,
+              explanation: "PAN (Personal Area Network) covers a very short range for personal devices like Bluetooth and smartphones."
+            },
+            { 
+              q: "Bluetooth connections between a phone and a headset are examples of:", 
+              options: ["LAN", "PAN", "CAN", "MAN"], 
+              a: 1,
+              explanation: "Bluetooth is a key technology for PANs (Personal Area Networks)."
+            },
+            { 
+              q: "LAN stands for:", 
+              options: ["Large Area Network", "Local Area Network", "Long Area Network", "Linked Area Network"], 
+              a: 1,
+              explanation: "LAN stands for Local Area Network."
+            },
+            { 
+              q: "A network located within a single room, building, or home is best classified as a:", 
+              options: ["WAN", "MAN", "LAN", "CAN"], 
+              a: 2,
+              explanation: "A LAN covers a small area like a room, building, or home."
+            },
+            { 
+              q: "MAN stands for:", 
+              options: ["Metropolitan Area Network", "Main Area Network", "Medium Area Network", "Massive Area Network"], 
+              a: 0,
+              explanation: "MAN stands for Metropolitan Area Network."
+            },
+            { 
+              q: "Which network type covers a city or a town?", 
+              options: ["LAN", "PAN", "MAN", "WAN"], 
+              a: 2,
+              explanation: "A MAN (Metropolitan Area Network) covers a city or town."
+            },
+            { 
+              q: "WAN stands for:", 
+              options: ["World Area Network", "Wide Area Network", "Web Area Network", "Wireless Area Network"], 
+              a: 1,
+              explanation: "WAN stands for Wide Area Network."
+            },
+            { 
+              q: "The Internet is the largest example of a:", 
+              options: ["LAN", "MAN", "WAN", "PAN"], 
+              a: 2,
+              explanation: "The Internet allows communication across countries and continents, making it the largest WAN."
+            },
+            { 
+              q: "A network specifically designed for a residential environment sharing broadband is a:", 
+              options: ["CAN", "HAN", "MAN", "WAN"], 
+              a: 1,
+              explanation: "HAN (Home Area Network) is a residential network sharing broadband."
+            },
+            { 
+              q: "CAN stands for:", 
+              options: ["City Area Network", "Campus Area Network", "Computer Area Network", "Central Area Network"], 
+              a: 1,
+              explanation: "CAN stands for Campus Area Network."
+            },
+            { 
+              q: "A university network connecting multiple buildings on a single property is a:", 
+              options: ["PAN", "HAN", "CAN", "MAN"], 
+              a: 2,
+              explanation: "A network for a school or university is classified as a CAN (Campus Area Network)."
+            },
+            { 
+              q: "Which covers a larger geographical area?", 
+              options: ["LAN", "MAN", "WAN", "PAN"], 
+              a: 2,
+              explanation: "WAN covers large areas like countries, MAN covers cities, LAN covers buildings, PAN covers personal space."
+            },
+            { 
+              q: "A network connecting branch offices in different countries would be a:", 
+              options: ["LAN", "WAN", "MAN", "CAN"], 
+              a: 1,
+              explanation: "Connecting countries requires a Wide Area Network (WAN)."
+            },
+            { 
+              q: "HAN stands for:", 
+              options: ["House Area Network", "Home Area Network", "Hybrid Area Network", "Host Area Network"], 
+              a: 1,
+              explanation: "HAN stands for Home Area Network."
+            },
+            { 
+              q: "If you connect 5 computers in a small office, you have created a:", 
+              options: ["WAN", "MAN", "LAN", "PAN"], 
+              a: 2,
+              explanation: "A small group of computers in a single location (office) is a LAN."
+            },
+            // Section 6: Network Architecture
+            { 
+              q: "In a Peer-to-Peer network:", 
+              options: ["There is a powerful central server", "All computers are equal", "Security is managed centrally", "It is expensive to set up"], 
+              a: 1,
+              explanation: "In Peer-to-Peer networks, there is no central server and all computers are equal."
+            },
+            { 
+              q: "Which is a characteristic of a Peer-to-Peer network?", 
+              options: ["Centralized storage", "Each computer can act as both client and server", "Requires a dedicated administrator", "Scalable to thousands of users"], 
+              a: 1,
+              explanation: "In P2P, each computer can act as client and server."
+            },
+            { 
+              q: "Which is an advantage of a Peer-to-Peer network?", 
+              options: ["High security", "Centralized backup", "Low cost and easy to configure", "Good for large networks"], 
+              a: 2,
+              explanation: "Advantages include low cost and being easy to configure."
+            },
+            { 
+              q: "Which is a disadvantage of a Peer-to-Peer network?", 
+              options: ["Dependent on a central server", "Expensive hardware", "Less secure and difficult to manage", "Requires specialized software"], 
+              a: 2,
+              explanation: "Disadvantages are that it is less secure and difficult to manage."
+            },
+            { 
+              q: "Peer-to-Peer networks are appropriate when:", 
+              options: ["There are 10 or fewer users", "Security is critical", "The network will grow rapidly", "Centralized control is needed"], 
+              a: 0,
+              explanation: "P2P is appropriate when there are 10 or fewer users and security is not critical."
+            },
+            { 
+              q: "In a Client-Server network:", 
+              options: ["All computers are peers", "A central server controls resources", "There is no central administration", "Security is low"], 
+              a: 1,
+              explanation: "In Client-Server networks, a central server controls resources."
+            },
+            { 
+              q: "Which is an advantage of a Client-Server network?", 
+              options: ["Low implementation cost", "No need for an administrator", "Centralized management and better security", "Easy for beginners to configure"], 
+              a: 2,
+              explanation: "Advantages include centralized management and better security."
+            },
+            { 
+              q: "Which is a disadvantage of a Client-Server network?", 
+              options: ["Single point of failure (the server)", "Cannot support many users", "Low data security", "Decentralized resources"], 
+              a: 0,
+              explanation: "A disadvantage is the single point of failure (the server) and high cost."
+            },
+            { 
+              q: "A Client-Server network is recommended for:", 
+              options: ["2-3 computers", "Home use only", "100+ computers", "Temporary networks"], 
+              a: 2,
+              explanation: "Client-Server supports many users and is recommended for larger networks (100+ computers)."
+            },
+            { 
+              q: "A Hybrid Network is defined as:", 
+              options: ["A network with only servers", "A network with only clients", "A combination of Peer-to-Peer and Client-Server models", "A network using only wireless media"], 
+              a: 2,
+              explanation: "A Hybrid Network is a combination of Peer-to-Peer and Client-Server models."
+            },
+            { 
+              q: "Which model requires a skilled administrator?", 
+              options: ["Stand-alone", "Peer-to-Peer", "Client-Server", "Direct Cable Connection"], 
+              a: 2,
+              explanation: "Client-Server networks require a skilled administrator."
+            },
+            { 
+              q: "In a Client-Server model, the 'Client':", 
+              options: ["Provides resources", "Requests data or services", "Manages network security", "Is the most powerful computer"], 
+              a: 1,
+              explanation: "A Client requests data or services (e.g., workstation, browser)."
+            },
+            { 
+              q: "In a Client-Server model, the 'Server':", 
+              options: ["Requests services", "Is usually a standard workstation", "Provides data or services and has higher performance", "Has no operating system"], 
+              a: 2,
+              explanation: "A Server provides data or services, has higher performance and storage, and runs a Network Operating System."
+            },
+            { 
+              q: "Which Operating System type is required for a Server?", 
+              options: ["Basic Input Output System", "Network Operating System (NOS)", "Stand-alone OS", "Mobile OS"], 
+              a: 1,
+              explanation: "Servers run a Network Operating System (NOS)."
+            },
+            { 
+              q: "If security is not critical and costs must be kept low, which architecture is best?", 
+              options: ["Client-Server", "Peer-to-Peer", "WAN", "MAN"], 
+              a: 1,
+              explanation: "Peer-to-Peer is low cost and appropriate when security is not critical."
+            },
+            // Section 7: Servers and Services
+            { 
+              q: "Which server type allows users to store and access files from a central location?", 
+              options: ["Printer Server", "File Server", "Database Server", "Modem"], 
+              a: 1,
+              explanation: "A File Server stores and manages files."
+            },
+            { 
+              q: "A Printer Server:", 
+              options: ["Stores emails", "Manages access to a shared printer", "Hosts web pages", "Runs applications"], 
+              a: 1,
+              explanation: "A Printer Server manages access to shared hardware like printers."
+            },
+            { 
+              q: "A server that runs specific software programs for clients is called an:", 
+              options: ["Application Server", "File Server", "Printer Server", "Message Server"], 
+              a: 0,
+              explanation: "An Application Server runs specific programs/software."
+            },
+            { 
+              q: "Which server manages emails and communication?", 
+              options: ["Database Server", "Message Server", "File Server", "Print Server"], 
+              a: 1,
+              explanation: "A Message Server manages communication services like email."
+            },
+            { 
+              q: "A Database Server:", 
+              options: ["Stores and manages large amounts of structured data", "Connects the network to the internet", "Scans documents", "Prints files"], 
+              a: 0,
+              explanation: "A Database Server stores and manages data."
+            },
+            { 
+              q: "AD DS stands for:", 
+              options: ["Advanced Data Domain System", "Active Directory Domain Services", "Active Data Distribution Server", "Automated Directory Domain Security"], 
+              a: 1,
+              explanation: "AD DS stands for Active Directory Domain Services."
+            },
+            { 
+              q: "What is the function of AD DS?", 
+              options: ["To speed up internet connection", "To manage users, computers, and resources using a centralized database", "To physically connect cables", "To act as a firewall"], 
+              a: 1,
+              explanation: "AD DS manages users, computers, and resources in a network using a centralized database."
+            },
+            { 
+              q: "A specialized high-performance computer designed to process requests and deliver data to other computers is a:", 
+              options: ["Client", "Server", "Hub", "Switch"], 
+              a: 1,
+              explanation: "This is the definition of a Server."
+            },
+            { 
+              q: "Which of the following is NOT listed as a common type of server in the reviewer?", 
+              options: ["File Server", "Gaming Server", "Database Server", "Message Server"], 
+              a: 1,
+              explanation: "Gaming Server is not listed in the common types (File, Printer, Application, Message, Database)."
+            },
+            { 
+              q: "In a network environment, a workstation that uses the services of a server is called a:", 
+              options: ["Host", "Client", "Master", "Gateway"], 
+              a: 1,
+              explanation: "A Client is the workstation that requests and uses services."
+            },
+            // Section 8: Topologies and Advanced
+            { 
+              q: "Which topology connects all devices to a single central cable?", 
+              options: ["Star", "Ring", "Bus", "Mesh"], 
+              a: 2,
+              explanation: "Bus Topology connects all devices to a single central cable."
+            },
+            { 
+              q: "In which topology are all devices connected to a central device like a hub or switch?", 
+              options: ["Bus", "Star", "Ring", "Mesh"], 
+              a: 1,
+              explanation: "Star Topology connects all devices to a central device (hub/switch)."
+            },
+            { 
+              q: "Which topology connects devices in a closed loop?", 
+              options: ["Star", "Bus", "Ring", "Hybrid"], 
+              a: 2,
+              explanation: "Ring Topology connects devices in a closed loop."
+            },
+            { 
+              q: "Which topology offers the highest redundancy by connecting every device to every other device?", 
+              options: ["Bus", "Star", "Mesh", "Ring"], 
+              a: 2,
+              explanation: "Mesh Topology provides high redundancy."
+            },
+            { 
+              q: "An IP Address is used to:", 
+              options: ["Identify the physical location of the computer", "Identify a device on a network", "Encrypt data", "Cool down the CPU"], 
+              a: 1,
+              explanation: "An IP Address identifies a device on a network."
+            },
+            { 
+              q: "Which of the following is a class of IP Address mentioned for review?", 
+              options: ["Class X", "Class A", "Class Z", "Class H"], 
+              a: 1,
+              explanation: "Class A, B, and C are the standard IP classes mentioned."
+            },
+            { 
+              q: "An IP address consists of a Network Address and a:", 
+              options: ["Street Address", "MAC Address", "Host Address", "Server Address"], 
+              a: 2,
+              explanation: "IP Address = Network Address + Host Address."
+            },
+            { 
+              q: "What is used to distinguish the network portion from the host portion of an IP address?", 
+              options: ["Default Gateway", "Subnet Mask", "DNS Server", "MAC Address"], 
+              a: 1,
+              explanation: "A Subnet Mask is used to identify the network and host portions."
+            },
+            { 
+              q: "IP addresses that are valid for use on the public Internet are called:", 
+              options: ["Private IP Addresses", "Public IP Addresses", "Static IP Addresses", "Dynamic IP Addresses"], 
+              a: 1,
+              explanation: "Public IP Addresses are valid on the Internet."
+            },
+            { 
+              q: "IP addresses used only within a local network and not on the internet are:", 
+              options: ["Public", "Private", "Global", "Universal"], 
+              a: 1,
+              explanation: "Private IP addresses are for local network use only."
+            },
+            { 
+              q: "An IP address that does not change is called:", 
+              options: ["Dynamic", "Static", "Private", "Public"], 
+              a: 1,
+              explanation: "Static IP addresses do not change."
+            },
+            { 
+              q: "An IP address that is automatically assigned and may change is called:", 
+              options: ["Static", "Dynamic", "Fixed", "Permanent"], 
+              a: 1,
+              explanation: "Dynamic IP addresses are automatically assigned and may change."
+            },
+            { 
+              q: "Class A, B, and C are types of:", 
+              options: ["MAC Addresses", "IP Addresses", "Email Protocols", "Cable Categories"], 
+              a: 1,
+              explanation: "These are classes of IP Addresses."
+            },
+            // Section 9: Mixed Review
+            { 
+              q: "If you have a network of 500 computers in a corporate building, which architecture should you use?", 
+              options: ["Peer-to-Peer", "Client-Server", "Ad-Hoc", "Direct Link"], 
+              a: 1,
+              explanation: "Client-Server is recommended for 100+ computers and supports many users."
+            },
+            { 
+              q: "A home network with 3 computers sharing a printer without a dedicated server is likely a:", 
+              options: ["Client-Server Network", "Peer-to-Peer Network", "MAN", "WAN"], 
+              a: 1,
+              explanation: "Peer-to-Peer is recommended for 10 or fewer users, especially in homes without a central server."
+            },
+            { 
+              q: "Which device would be most effective to reduce network traffic congestion compared to a hub?", 
+              options: ["Repeater", "Switch", "Amplifier", "Connector"], 
+              a: 1,
+              explanation: "A Switch is more efficient than a hub because it sends data only to the intended recipient."
+            },
+            { 
+              q: "You need to connect two office buildings in the same city. This is a:", 
+              options: ["PAN", "LAN", "MAN", "WAN"], 
+              a: 2,
+              explanation: "A network covering a city or town is a MAN (Metropolitan Area Network)."
+            },
+            { 
+              q: "Which cable is most appropriate for a noisy factory environment due to its shield?", 
+              options: ["UTP", "STP", "Cat 1", "Unshielded Coaxial"], 
+              a: 1,
+              explanation: "STP (Shielded Twisted Pair) has a foil shield for better noise protection."
+            },
+            { 
+              q: "To connect a home network to an Internet Service Provider (ISP) via telephone line, you need a:", 
+              options: ["Switch", "Hub", "Modem", "Repeater"], 
+              a: 2,
+              explanation: "A Modem converts the digital network signal to the analog signal used by phone lines."
+            },
+            { 
+              q: "Which feature allows a network administrator to control user access from one location?", 
+              options: ["Peer-to-Peer configuration", "Centralized Management (Client-Server)", "Stand-alone setup", "Unshielded cabling"], 
+              a: 1,
+              explanation: "Centralized management is a key advantage of Client-Server networks."
+            },
+            { 
+              q: "Immune to electromagnetic interference' is a key characteristic of:", 
+              options: ["Copper wire", "Fiber-Optic cable", "UTP", "Coaxial"], 
+              a: 1,
+              explanation: "Fiber-optic cable transmits light, making it immune to electrical interference."
+            },
+            { 
+              q: "Which is NOT a listed disadvantage of Fiber-Optic cable?", 
+              options: ["Expensive", "Difficult installation", "High signal loss", "Difficult maintenance"], 
+              a: 2,
+              explanation: "High signal loss is INCORRECT; Fiber has LOW signal loss (which is an advantage)."
+            },
+            { 
+              q: "The 'Host Address' part of an IP Address identifies:", 
+              options: ["The specific device on the network", "The network itself", "The router", "The country"], 
+              a: 0,
+              explanation: "The Host Address identifies the specific device/host within the network."
+            },
+            { 
+              q: "Which device operates using MAC addresses?", 
+              options: ["Hub", "Repeater", "Switch", "Passive Hub"], 
+              a: 2,
+              explanation: "Switches use MAC addresses to forward data to the correct device."
+            },
+            { 
+              q: "A 'Stand-Alone Computer' differs from a networked computer because:", 
+              options: ["It has no CPU", "It is not connected to other computers", "It cannot run software", "It is always faster"], 
+              a: 1,
+              explanation: "The definition of a Stand-Alone computer is one that is not connected to any network."
+            },
+            { 
+              q: "Which medium uses 'Cladding'?", 
+              options: ["Coaxial", "UTP", "Fiber-Optic", "STP"], 
+              a: 2,
+              explanation: "Cladding is the outer layer of the glass/plastic core in a Fiber-Optic cable."
+            },
+            { 
+              q: "Cat 5e cable supports speeds up to:", 
+              options: ["10 Mbps", "100 Mbps", "10 Gbps", "100 Gbps"], 
+              a: 1,
+              explanation: "The material states Cat 5 / 5e supports up to 100 Mbps."
+            },
+            { 
+              q: "A computer that provides resources to other computers is a:", 
+              options: ["Client", "Server", "Terminal", "Guest"], 
+              a: 1,
+              explanation: "A Server provides data or services."
+            },
+            { 
+              q: "Which is faster?", 
+              options: ["Cat 3", "Cat 5", "Cat 6", "Cat 4"], 
+              a: 2,
+              explanation: "Cat 6 (1 Gbps) is faster than Cat 5 (100 Mbps), Cat 4 (16 Mbps), and Cat 3 (10 Mbps)."
+            },
+            { 
+              q: "Which network type is used for a school campus?", 
+              options: ["PAN", "CAN", "HAN", "WAN"], 
+              a: 1,
+              explanation: "CAN stands for Campus Area Network."
+            },
+            { 
+              q: "Which device translates protocols between different networks?", 
+              options: ["Gateway", "Hub", "Switch", "Repeater"], 
+              a: 0,
+              explanation: "A Gateway connects networks with different protocols and translates data."
+            },
+            { 
+              q: "Network adapters are also known as:", 
+              options: ["NICs", "NOCs", "NACs", "NECs"], 
+              a: 0,
+              explanation: "Network Adapter is synonymous with NIC (Network Interface Card)."
+            },
+            { 
+              q: "Which topology is known for having a single point of failure if the central node breaks?", 
+              options: ["Bus", "Star", "Mesh", "Ring"], 
+              a: 1,
+              explanation: "In a Star topology, if the central hub/switch fails, the whole network fails."
+            },
+            { 
+              q: "Modulation' turns:", 
+              options: ["Analog to Digital", "Digital to Analog", "Light to Electrical", "Electrical to Light"], 
+              a: 1,
+              explanation: "Modulation converts Digital signals to Analog."
+            },
+            { 
+              q: "Demodulation' turns:", 
+              options: ["Analog to Digital", "Digital to Analog", "Light to Sound", "Sound to Light"], 
+              a: 0,
+              explanation: "Demodulation converts Analog signals back to Digital."
+            },
+            { 
+              q: "Which server stores user accounts in a domain?", 
+              options: ["File Server", "Print Server", "AD DS (Domain Controller)", "Web Server"], 
+              a: 2,
+              explanation: "AD DS (Active Directory Domain Services) manages users and computers."
+            },
+            { 
+              q: "Which cable is used for Cable TV?", 
+              options: ["UTP", "Fiber", "Coaxial", "STP"], 
+              a: 2,
+              explanation: "Coaxial cable is commonly used for Cable TV."
+            },
+            { 
+              q: "Which UTP category is for 'Voice Only'?", 
+              options: ["Cat 1", "Cat 2", "Cat 3", "Cat 5"], 
+              a: 0,
+              explanation: "Cat 1 is for voice only."
+            },
+            { 
+              q: "Which device forwards data to *all* connected ports?", 
+              options: ["Switch", "Router", "Hub", "Bridge"], 
+              a: 2,
+              explanation: "A Hub sends incoming data to all ports (inefficient)."
+            },
+            { 
+              q: "Which network model creates a 'single point of failure' at the server?", 
+              options: ["Peer-to-Peer", "Client-Server", "Ad-Hoc", "Direct"], 
+              a: 1,
+              explanation: "Client-Server networks have a single point of failure: the central server."
+            },
+            { 
+              q: "WANs often use which transmission medium for long distances?", 
+              options: ["Bluetooth", "Infrared", "Fiber-Optics or Satellites", "Cat 3 Cable"], 
+              a: 2,
+              explanation: "WANs cover large areas and often use fiber-optics or satellites."
+            },
+            { 
+              q: "A 'Message Server' is primarily responsible for:", 
+              options: ["Printing", "Email", "Files", "Databases"], 
+              a: 1,
+              explanation: "Message Servers manage email and communication."
+            },
+            { 
+              q: "Private IP addresses are used for:", 
+              options: ["The entire Internet", "Internal Local Networks (LANs)", "Websites like Google", "Public servers"], 
+              a: 1,
+              explanation: "Private IP addresses are used internally within a Local Area Network (LAN)."
+            },
+            { 
+              q: "Which is NOT a guided media?", 
+              options: ["Microwave", "Coaxial", "Fiber", "Twisted Pair"], 
+              a: 0,
+              explanation: "Microwave is a wireless (Unguided) medium."
+            },
+            { 
+              q: "Low cost' is an advantage of:", 
+              options: ["Fiber Optics", "Client-Server Networks", "Peer-to-Peer Networks", "WANs"], 
+              a: 2,
+              explanation: "Peer-to-Peer networks are low cost and easy to configure."
+            },
+            { 
+              q: "Centralized Backups' are easier in:", 
+              options: ["Peer-to-Peer", "Client-Server", "Stand-alone PCs", "Ad-hoc networks"], 
+              a: 1,
+              explanation: "Client-Server networks allow for centralized management and backups."
+            },
+            { 
+              q: "A 'Bridge' connects:", 
+              options: ["Different protocols", "Similar network segments", "A computer to a printer", "A keyboard to a mouse"], 
+              a: 1,
+              explanation: "A Bridge connects similar network segments."
+            },
+            { 
+              q: "Which topology requires the most cabling?", 
+              options: ["Bus", "Star", "Mesh", "Ring"], 
+              a: 2,
+              explanation: "Mesh topology requires every device to connect to every other device, using the most cabling."
+            },
+            { 
+              q: "The outer layer of a coaxial cable is the:", 
+              options: ["Conductor", "Insulation", "Shield/Jacket", "Core"], 
+              a: 2,
+              explanation: "The outer layer is the shield/jacket."
+            },
+            { 
+              q: "Networking allows 'Simultaneous access to data,' which means:", 
+              options: ["Only one person can open a file", "Multiple users can use data at the same time", "Data is deleted after use", "Data is printed automatically"], 
+              a: 1,
+              explanation: "Simultaneous access means multiple users can work on the same data at the same time."
+            },
+        ];
+
+        // --- State ---
+        let userAnswers = {};
+        let searchTerm = '';
+
+        // --- Logic ---
+        function renderQuestions() {
+            const container = document.getElementById('questionsContainer');
+            container.innerHTML = '';
+
+            const filteredQuestions = questions.map((q, i) => ({...q, originalIndex: i}))
+                .filter(q => q.q.toLowerCase().includes(searchTerm.toLowerCase()));
+
+            if (filteredQuestions.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-20 text-gray-400">
+                        <p>No questions found matching "${searchTerm}"</p>
+                    </div>
+                `;
+                return;
+            }
+
+            filteredQuestions.forEach((item) => {
+                const qIndex = item.originalIndex;
+                const isAnswered = userAnswers[qIndex] !== undefined;
+                const isCorrect = userAnswers[qIndex] === item.a;
+
+                // Create Card
+                const card = document.createElement('div');
+                card.className = `bg-white rounded-xl shadow-sm border transition-all duration-300 ${isAnswered ? (isCorrect ? 'border-green-200 shadow-green-50' : 'border-red-200 shadow-red-50') : 'border-gray-200 hover:shadow-md'}`;
+                card.id = `q-${qIndex}`;
+
+                // Header section inside card
+                let statusBadge = '';
+                if (isAnswered) {
+                    if (isCorrect) {
+                        statusBadge = `<span class="flex items-center text-green-600 text-sm font-medium"><i data-lucide="check-circle" class="w-4 h-4 mr-1"></i> Correct</span>`;
+                    } else {
+                        statusBadge = `<span class="flex items-center text-red-500 text-sm font-medium"><i data-lucide="x-circle" class="w-4 h-4 mr-1"></i> Incorrect</span>`;
+                    }
+                }
+
+                // Options HTML
+                const optionsHtml = item.options.map((option, optIndex) => {
+                    let btnClass = "w-full text-left p-4 rounded-lg border-2 transition-all duration-200 flex items-center justify-between group text-sm sm:text-base ";
+                    let icon = '';
+
+                    if (isAnswered) {
+                        if (optIndex === item.a) {
+                            btnClass += "bg-green-50 border-green-500 text-green-800";
+                            icon = `<i data-lucide="check-circle" class="w-5 h-5 text-green-600"></i>`;
+                        } else if (optIndex === userAnswers[qIndex]) {
+                            btnClass += "bg-red-50 border-red-500 text-red-800";
+                            icon = `<i data-lucide="x-circle" class="w-5 h-5 text-red-500"></i>`;
+                        } else {
+                            btnClass += "bg-gray-50 border-transparent text-gray-400 opacity-60";
+                        }
+                    } else {
+                        btnClass += "bg-white border-gray-100 hover:border-blue-400 hover:bg-blue-50 text-gray-600";
+                    }
+
+                    const circleClass = (isAnswered && optIndex === item.a) ? 'bg-green-500 border-green-500 text-white' : 
+                                      (isAnswered && optIndex === userAnswers[qIndex]) ? 'bg-red-500 border-red-500 text-white' : 
+                                      'bg-gray-100 border-gray-300 text-gray-500 group-hover:border-blue-400 group-hover:text-blue-500';
+
+                    return `
+                        <button
+                            onclick="handleAnswer(${qIndex}, ${optIndex})"
+                            ${isAnswered ? 'disabled' : ''}
+                            class="${btnClass}"
+                        >
+                            <span class="flex items-center gap-3">
+                                <span class="w-6 h-6 flex-shrink-0 rounded-full flex items-center justify-center text-xs font-bold border ${circleClass}">
+                                    ${String.fromCharCode(65 + optIndex)}
+                                </span>
+                                <span>${option}</span>
+                            </span>
+                            ${icon}
+                        </button>
+                    `;
+                }).join('');
+
+                // Explanation HTML
+                let explanationHtml = '';
+                if (isAnswered && item.explanation) {
+                    const bgClass = isCorrect ? 'bg-blue-50 text-blue-900 border border-blue-100' : 'bg-orange-50 text-orange-900 border border-orange-100';
+                    const iconType = isCorrect ? 'book-open' : 'alert-circle';
+                    const iconColor = isCorrect ? 'text-blue-500' : 'text-orange-500';
+                    const titleText = isCorrect ? 'Explanation:' : "Why that's incorrect:";
+
+                    explanationHtml = `
+                        <div class="mt-6 p-4 rounded-lg flex gap-3 text-sm leading-relaxed animate-fade-in ${bgClass}">
+                            <div class="flex-shrink-0 mt-0.5">
+                                <i data-lucide="${iconType}" class="w-5 h-5 ${iconColor}"></i>
+                            </div>
+                            <div>
+                                <span class="font-bold block mb-1">${titleText}</span>
+                                ${item.explanation}
+                            </div>
+                        </div>
+                    `;
+                }
+
+                card.innerHTML = `
+                    <div class="p-6">
+                        <div class="flex justify-between items-start mb-4">
+                            <span class="text-xs font-bold text-gray-400 uppercase tracking-wider">Question ${qIndex + 1}</span>
+                            ${statusBadge}
+                        </div>
+                        
+                        <h3 class="text-lg font-semibold text-gray-800 mb-6 leading-relaxed">
+                            ${item.q}
+                        </h3>
+
+                        <div class="space-y-3">
+                            ${optionsHtml}
+                        </div>
+
+                        ${explanationHtml}
+                    </div>
+                `;
+
+                container.appendChild(card);
+            });
+            
+            // Re-initialize icons for newly added elements
+            lucide.createIcons();
+            updateScore();
+        }
+
+        function handleAnswer(qIndex, optIndex) {
+            if (userAnswers[qIndex] !== undefined) return;
+            
+            userAnswers[qIndex] = optIndex;
+            
+            // To prevent full re-render jump, we could do DOM manipulation, 
+            // but filtered lists make index tracking tricky.
+            // Simple approach: Update state and re-render. Browsers handle simple list updates fast enough.
+            // For better UX with search, we re-render.
+            renderQuestions();
+        }
+
+        function handleSearch(val) {
+            searchTerm = val;
+            renderQuestions();
+        }
+
+        function resetReviewer() {
+            if (confirm("Are you sure you want to reset all progress?")) {
+                userAnswers = {};
+                document.getElementById('searchInput').value = '';
+                searchTerm = '';
+                renderQuestions();
+                window.scrollTo(0, 0);
+            }
+        }
+
+        function updateScore() {
+            const correctCount = Object.keys(userAnswers).reduce((acc, key) => {
+                return userAnswers[key] === questions[key].a ? acc + 1 : acc;
+            }, 0);
+            document.getElementById('scoreDisplay').textContent = correctCount;
+            document.getElementById('answeredDisplay').textContent = Object.keys(userAnswers).length;
+        }
+
+        // Initial Render
+        renderQuestions();
+
+    </script>
+</body>
+</html>
