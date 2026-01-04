@@ -3,20 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Networking Comprehensive Quiz (150 Questions)</title>
+    <title>Intro to Networking Reviewer (150 Items)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f3f4f6;
-        }
-        .option-btn {
-            transition: all 0.2s;
-        }
-        .option-btn:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
         .fade-in {
             animation: fadeIn 0.3s ease-in-out;
@@ -25,443 +17,427 @@
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
         }
+        .correct-anim {
+            background-color: #d1fae5 !important;
+            border-color: #10b981 !important;
+            color: #065f46 !important;
+        }
+        .wrong-anim {
+            background-color: #fee2e2 !important;
+            border-color: #ef4444 !important;
+            color: #991b1b !important;
+        }
+        /* Scrollbar for options if list gets long on mobile */
+        #options-container {
+            max-height: 60vh;
+            overflow-y: auto;
+        }
     </style>
 </head>
-<body class="min-h-screen flex flex-col items-center py-8 px-4">
+<body class="bg-gray-100 min-h-screen flex items-center justify-center p-2 md:p-4">
 
-    <!-- Header -->
-    <header class="w-full max-w-3xl bg-white rounded-2xl shadow-lg p-6 mb-6 flex justify-between items-center sticky top-4 z-10">
-        <div>
-            <h1 class="text-2xl font-bold text-gray-800">Networking Master Quiz</h1>
-            <p class="text-sm text-gray-500">Based on Final Intro-to-Networking.ppt</p>
+    <!-- Main Container -->
+    <div class="bg-white rounded-xl shadow-2xl w-full max-w-4xl overflow-hidden flex flex-col h-[90vh] md:h-auto md:min-h-[700px]">
+        
+        <!-- Header -->
+        <div class="bg-blue-800 p-4 md:p-6 text-white flex justify-between items-center shadow-md z-10 shrink-0">
+            <div>
+                <h1 class="text-xl md:text-2xl font-bold"><i class="fas fa-network-wired mr-2"></i>Networking Reviewer</h1>
+                <p class="text-blue-200 text-xs md:text-sm mt-1">150 Questions • Comprehensive</p>
+            </div>
+            <div class="text-right">
+                <div class="text-xs md:text-sm uppercase tracking-wider opacity-75">Score</div>
+                <div class="text-2xl md:text-3xl font-bold" id="score-display">0</div>
+            </div>
         </div>
-        <div class="text-right">
-            <div class="text-sm font-semibold text-gray-600">Score</div>
-            <div class="text-2xl font-bold text-blue-600"><span id="score">0</span> / <span id="total-answered">0</span></div>
-        </div>
-    </header>
 
-    <!-- Progress Bar -->
-    <div class="w-full max-w-3xl mb-6">
-        <div class="flex justify-between text-xs font-semibold text-gray-500 mb-1">
-            <span>Question <span id="current-q-num">1</span> of 150</span>
-            <span id="progress-percent">0%</span>
+        <!-- Start Screen -->
+        <div id="start-screen" class="flex-1 flex flex-col items-center justify-center p-8 text-center space-y-6 overflow-y-auto">
+            <div class="w-24 h-24 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 text-4xl mb-4 shadow-inner">
+                <i class="fas fa-layer-group"></i>
+            </div>
+            <h2 class="text-3xl font-bold text-gray-800">150-Item Reviewer</h2>
+            <p class="text-gray-600 max-w-lg mx-auto">
+                This comprehensive session covers <strong>all slides</strong> in the PPT, including:
+                <br><span class="text-sm mt-2 block text-gray-500">• Devices (Hubs, Switches, Routers, Bridges, Gateways, Modems)
+                <br>• Media (Microwave)
+                <br>• Architectures (Client-Server, P2P, Hybrid)
+                <br>• All Server Types (Web, Mail, Proxy, Telnet, List, Groupware, etc.)</span>
+            </p>
+            <button onclick="startQuiz()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-10 rounded-full transition transform hover:scale-105 shadow-xl ring-4 ring-blue-50">
+                Start Challenge
+            </button>
         </div>
-        <div class="w-full bg-gray-200 rounded-full h-2.5">
-            <div id="progress-bar" class="bg-blue-600 h-2.5 rounded-full" style="width: 0%"></div>
-        </div>
-    </div>
 
-    <!-- Question Card -->
-    <main id="quiz-container" class="w-full max-w-3xl bg-white rounded-2xl shadow-xl overflow-hidden min-h-[400px]">
-        <div class="p-8">
-            <div class="mb-6">
-                <span class="inline-block px-3 py-1 bg-blue-100 text-blue-800 text-xs font-bold rounded-full mb-3" id="q-category">Category</span>
-                <h2 id="q-text" class="text-xl font-semibold text-gray-800 leading-relaxed">Loading Question...</h2>
+        <!-- Quiz Interface -->
+        <div id="quiz-screen" class="hidden flex-1 flex flex-col overflow-hidden">
+            <!-- Progress Bar -->
+            <div class="w-full bg-gray-200 h-2 shrink-0">
+                <div id="progress-bar" class="bg-green-500 h-2 transition-all duration-300" style="width: 0%"></div>
             </div>
 
-            <div id="options-container" class="space-y-3">
-                <!-- Options will be injected here -->
-            </div>
-
-            <!-- Feedback Area -->
-            <div id="feedback-area" class="mt-6 hidden fade-in">
-                <div id="feedback-box" class="p-4 rounded-lg border-l-4">
-                    <h3 id="feedback-title" class="font-bold text-lg mb-1">Correct!</h3>
-                    <p id="feedback-text" class="text-gray-700">Explanation goes here.</p>
+            <div class="p-4 md:p-8 flex-1 flex flex-col overflow-y-auto">
+                <div class="flex justify-between text-gray-400 text-xs md:text-sm mb-2 shrink-0">
+                    <span id="question-count">Question 1 of 150</span>
+                    <span id="category-tag" class="uppercase tracking-widest font-semibold text-blue-400">General</span>
                 </div>
-                <div class="mt-4 flex justify-end">
-                    <button id="next-btn" onclick="nextQuestion()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg shadow-md transition-colors flex items-center">
-                        Next Question <i class="fas fa-arrow-right ml-2"></i>
+
+                <!-- Question Text -->
+                <div class="mb-6 shrink-0">
+                    <h2 id="question-text" class="text-lg md:text-2xl font-semibold text-gray-800 leading-snug fade-in">
+                        Loading...
+                    </h2>
+                </div>
+
+                <!-- Options Grid -->
+                <div id="options-container" class="grid grid-cols-1 gap-3 md:gap-4 mb-6 fade-in">
+                    <!-- Buttons injected by JS -->
+                </div>
+
+                <!-- Feedback Area -->
+                <div id="feedback-area" class="hidden shrink-0 mt-auto bg-gray-50 border-l-4 p-4 rounded-r shadow-inner fade-in">
+                    <div class="flex items-start">
+                        <div id="feedback-icon" class="text-2xl mr-3 mt-1"></div>
+                        <div class="flex-1">
+                            <h3 id="feedback-title" class="font-bold text-lg"></h3>
+                            <p id="feedback-text" class="text-gray-700 mt-1 text-sm md:text-base"></p>
+                        </div>
+                    </div>
+                    <button onclick="nextQuestion()" class="mt-4 bg-gray-800 hover:bg-gray-900 text-white font-semibold py-3 px-8 rounded shadow-lg w-full md:w-auto md:ml-auto block text-center">
+                        Next <i class="fas fa-chevron-right ml-1"></i>
                     </button>
                 </div>
             </div>
         </div>
-    </main>
-    
-    <!-- Finish Screen -->
-    <div id="finish-screen" class="hidden w-full max-w-3xl bg-white rounded-2xl shadow-xl p-8 text-center">
-        <div class="text-6xl text-blue-500 mb-4"><i class="fas fa-trophy"></i></div>
-        <h2 class="text-3xl font-bold text-gray-800 mb-2">Quiz Completed!</h2>
-        <p class="text-gray-600 mb-6">You have mastered the Introduction to Networking.</p>
-        <div class="text-4xl font-bold text-gray-900 mb-8">Score: <span id="final-score">0</span> / 150</div>
-        <button onclick="restartQuiz()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-lg shadow-lg transition-colors">
-            Restart Quiz
-        </button>
+
+        <!-- Result Screen -->
+        <div id="result-screen" class="hidden flex-1 flex flex-col items-center justify-center p-8 text-center overflow-y-auto">
+            <div id="final-icon" class="text-6xl mb-4 animate-bounce"></div>
+            <h2 class="text-3xl font-bold text-gray-800 mb-2">Review Complete!</h2>
+            <p class="text-gray-600 mb-6">Here is your final standing:</p>
+            
+            <div class="bg-white p-8 rounded-2xl border-2 border-blue-100 w-full max-w-xs mb-8 shadow-xl">
+                <div class="text-5xl font-extrabold text-blue-600 mb-2" id="final-score">0%</div>
+                <div class="text-gray-500 font-medium" id="final-score-text">0 / 150</div>
+            </div>
+
+            <button onclick="location.reload()" class="bg-gray-800 hover:bg-black text-white font-bold py-3 px-8 rounded-lg shadow-lg transition flex items-center">
+                <i class="fas fa-redo mr-2"></i> Restart
+            </button>
+        </div>
+
     </div>
 
     <script>
-        // Data Structure
-        const questions = [
-            // Section 1
-            { c: "Devices - Hubs & Switches", q: "What is the primary function of a Hub in a network?", o: ["To route data to specific IP addresses.", "To connect multiple devices and broadcast data to all of them.", "To connect a LAN to the Internet.", "To filter data based on MAC addresses."], a: 1, e: "A Hub is a Layer 1 device that acts as a multi-port repeater. It blindly broadcasts any signal it receives to all other ports." },
-            { c: "Devices - Hubs & Switches", q: "Which layer of the OSI model does a standard Hub operate at?", o: ["Data Link Layer (Layer 2)", "Network Layer (Layer 3)", "Physical Layer (Layer 1)", "Transport Layer (Layer 4)"], a: 2, e: "Hubs deal with electrical signals and physical connections, placing them firmly in the Physical Layer (Layer 1)." },
-            { c: "Devices - Hubs & Switches", q: "How does a Switch differ from a Hub regarding bandwidth usage?", o: ["A Switch shares bandwidth among all users.", "A Switch provides dedicated bandwidth to each port.", "A Switch reduces the total bandwidth available.", "A Switch requires more bandwidth to operate."], a: 1, e: "Unlike a Hub which shares total bandwidth (half-duplex), a Switch provides full dedicated bandwidth to each port (full-duplex)." },
-            { c: "Devices - Hubs & Switches", q: "What does a Switch use to make forwarding decisions?", o: ["IP Address", "MAC Address", "Port Number", "Protocol ID"], a: 1, e: "Switches operate at Layer 2 and use MAC addresses (Media Access Control) to decide where to forward frames." },
-            { c: "Devices - Hubs & Switches", q: "Which device sends data ONLY to the destination device (after learning its address)?", o: ["Hub", "Switch", "Repeater", "Passive Hub"], a: 1, e: "A Switch learns MAC addresses and filters traffic, sending unicast frames only to the specific destination port." },
-            { c: "Devices - Hubs & Switches", q: "What is a 'Collision Domain'?", o: ["The physical area where a wireless signal is lost.", "A network segment where data packets can collide with one another.", "A secure room where servers are kept.", "The software used to detect errors."], a: 1, e: "A collision domain is a network segment where data packets can collide if two devices transmit at the same time (common in Hubs)." },
-            { c: "Devices - Hubs & Switches", q: "How many collision domains exist in an 8-port Hub?", o: ["1", "8", "16", "0"], a: 0, e: "A Hub is a single collision domain. All devices connected to it compete for the same medium." },
-            { c: "Devices - Hubs & Switches", q: "How many collision domains exist in an 8-port Switch (assuming one device per port)?", o: ["1", "8", "16", "0"], a: 1, e: "Each port on a Switch is its own separate collision domain, eliminating collisions between ports." },
-            { c: "Devices - Hubs & Switches", q: "Which device is effectively a 'multi-port repeater'?", o: ["Switch", "Bridge", "Hub", "Gateway"], a: 2, e: "A Hub simply repeats the signal to multiple ports, making it a multi-port repeater." },
-            { c: "Devices - Hubs & Switches", q: "A 'Passive Hub' differs from an 'Active Hub' because:", o: ["It requires software to run.", "It does not regenerate or amplify the signal; it just connects wires.", "It acts as a router.", "It has fewer ports."], a: 1, e: "Passive hubs are essentially just wiring panels; Active hubs (repeaters) regenerate the signal strength." },
-            { c: "Devices - Hubs & Switches", q: "Switches typically operate at which OSI layer?", o: ["Layer 1 (Physical)", "Layer 2 (Data Link)", "Layer 3 (Network)", "Layer 7 (Application)"], a: 1, e: "Switches handle Frames and MAC addresses, which are Layer 2 concepts." },
-            { c: "Devices - Hubs & Switches", q: "Which device allows for Full-Duplex communication?", o: ["Hub", "Switch", "Coaxial Splitter", "Repeater"], a: 1, e: "Switches allow devices to send and receive simultaneously (Full-Duplex) because they don't have collisions." },
-            { c: "Devices - Hubs & Switches", q: "In Half-Duplex mode:", o: ["Devices can send and receive simultaneously.", "Devices can send and receive, but not at the same time.", "Devices can only receive.", "Devices can only send."], a: 1, e: "Half-Duplex is like a walkie-talkie: only one party can talk (transmit) at a time." },
-            { c: "Devices - Hubs & Switches", q: "If a Hub fails, what typically happens to the network segment connected to it?", o: ["The devices can still communicate wirelessly.", "Communication between devices on that Hub ceases.", "The Switch takes over automatically.", "The Router acts as a backup Hub."], a: 1, e: "The Hub is the central connection point. If it fails, the physical path between devices is broken." },
-            { c: "Devices - Hubs & Switches", q: "What happens to a data packet sent to a Switch port if the Switch does not know the destination MAC address?", o: ["It drops the packet.", "It sends the packet back to the sender.", "It floods (broadcasts) the packet to all other ports.", "It sends the packet to the default gateway only."], a: 2, e: "If a destination MAC is unknown, the Switch 'floods' the frame out all ports (except the source) to find the device." },
+        // --- 150 QUESTION BANK ---
+        const questionBank = [
+            // --- BASICS & DEVICES (1-30) ---
+            { q: "What is a network device that regenerates the signal and broadcasts it to all connected ports?", o: ["Switch", "Hub", "Router", "Bridge"], a: 1, exp: "A Hub broadcasts data to all ports, making it inefficient." },
+            { q: "Which device is 'smart' and sends data only to the specific destination MAC address?", o: ["Hub", "Switch", "Repeater", "Modem"], a: 1, exp: "Switches filter traffic by MAC address, reducing collisions." },
+            { q: "What is the primary function of a Router?", o: ["Convert signals", "Connect different networks/direct packets", "Regenerate signals", "Store files"], a: 1, exp: "Routers connect networks (LAN to WAN) and route packets via IP." },
+            { q: "Which device connects two network segments and filters traffic to reduce congestion?", o: ["Gateway", "Bridge", "Hub", "Modem"], a: 1, exp: "Bridges connect segments and filter local traffic based on MAC." },
+            { q: "What device acts as a 'translator' between networks using different protocols?", o: ["Bridge", "Gateway", "Switch", "Server"], a: 1, exp: "Gateways translate between dissimilar protocols." },
+            { q: "Modem stands for:", o: ["Modern Demodulation", "Modulator Demodulator", "Mobile Demonstrator", "Modular Demuxer"], a: 1, exp: "Modulator-Demodulator converts digital to analog and back." },
+            { q: "Which transmission medium uses line-of-sight high-frequency radio waves?", o: ["Fiber Optic", "Coaxial Cable", "Microwave Transmitters", "Twisted Pair"], a: 2, exp: "Microwave requires clear line-of-sight for transmission." },
+            { q: "A computer requesting resources is a:", o: ["Server", "Client", "Hub", "Mainframe"], a: 1, exp: "Clients request services; Servers provide them." },
+            { q: "A computer providing resources is a:", o: ["Client", "Server", "Gateway", "Workstation"], a: 1, exp: "Servers are dedicated to providing resources." },
+            { q: "Which model has centralized security and control?", o: ["Peer-to-Peer", "Client-Server", "Ad-hoc", "Mesh"], a: 1, exp: "Client-Server uses a central server for administration." },
+            { q: "Hubs operate at which layer (implied by 'dumb' physical connection)?", o: ["Physical", "Data Link", "Network", "Application"], a: 0, exp: "Hubs are physical layer devices (Layer 1)." },
+            { q: "Switches operate primarily at which layer (using MAC addresses)?", o: ["Physical", "Data Link", "Network", "Transport"], a: 1, exp: "Switches use MAC addresses, which are Layer 2 (Data Link)." },
+            { q: "Routers operate at which layer (using IP addresses)?", o: ["Physical", "Data Link", "Network", "Application"], a: 2, exp: "Routers use IP addresses, which are Layer 3 (Network)." },
+            { q: "A Repeater is most similar to a:", o: ["Switch", "Hub", "Router", "Bridge"], a: 1, exp: "Hubs are essentially multi-port repeaters." },
+            { q: "Which device extends a cable's length by regenerating the signal?", o: ["Repeater", "Gateway", "Bridge", "NIC"], a: 0, exp: "Repeaters regenerate signals to overcome attenuation." },
+            { q: "Which device connects a LAN to a WAN (Internet)?", o: ["Switch", "Hub", "Router", "Repeater"], a: 2, exp: "Routers gateway traffic between the local LAN and the external WAN." },
+            { q: "To connect dissimilar networks (e.g., PC to Mainframe), use a:", o: ["Bridge", "Gateway", "Switch", "Hub"], a: 1, exp: "Gateways translate protocols between dissimilar systems." },
+            { q: "Which device reduces collision domains but not broadcast domains?", o: ["Hub", "Switch", "Repeater", "Cable"], a: 1, exp: "Switches break collision domains but still broadcast to all (unless VLANs are used)." },
+            { q: "A WAP stands for:", o: ["Wired Access Point", "Wireless Access Protocol", "Wireless Access Point", "Wide Area Port"], a: 2, exp: "Wireless Access Points connect wireless devices to the wired network." },
+            { q: "Microwave transmission is classified as:", o: ["Wired Media", "Wireless Media", "Fiber Media", "Copper Media"], a: 1, exp: "Microwave is a wireless transmission technology." },
+            { q: "Which device is a 'multi-port bridge'?", o: ["Hub", "Switch", "Router", "Gateway"], a: 1, exp: "Switches are technically multi-port bridges." },
+            { q: "Which device has a single collision domain for all ports?", o: ["Switch", "Hub", "Router", "Bridge"], a: 1, exp: "In a Hub, if one device talks, everyone else must wait." },
+            { q: "Modems are needed for:", o: ["Ethernet cabling", "Telephone/Cable lines", "Fiber Optics", "Microwave"], a: 1, exp: "Modems convert digital data for analog phone/cable lines." },
+            { q: "Which device isolates traffic between two LAN segments based on MAC?", o: ["Repeater", "Hub", "Bridge", "Amplifier"], a: 2, exp: "Bridges filter traffic between two segments." },
+            { q: "The physical connection point on a computer is the:", o: ["NIC", "Hub", "Switch", "Bridge"], a: 0, exp: "The Network Interface Card (NIC) connects the PC to the medium." },
+            { q: "Which device creates the most network traffic (congestion)?", o: ["Switch", "Router", "Hub", "Bridge"], a: 2, exp: "Hubs broadcast every packet, causing high congestion." },
+            { q: "What does a Router use to make decisions?", o: ["MAC Address", "IP Address", "Physical Location", "Computer Name"], a: 1, exp: "Routers route packets based on logical (IP) addresses." },
+            { q: "What does a Switch use to make decisions?", o: ["MAC Address", "IP Address", "Protocol", "App ID"], a: 0, exp: "Switches switch frames based on physical (MAC) addresses." },
+            { q: "Which device is capable of performing 'Path Selection'?", o: ["Hub", "Bridge", "Router", "Repeater"], a: 2, exp: "Routers determine the best path to a destination network." },
+            { q: "Microwave transmitters are affected by:", o: ["Magnetic fields", "Line of sight obstructions", "Copper prices", "Voltage drops"], a: 1, exp: "Microwave requires a clear line of sight." },
 
-            // Section 2
-            { c: "Routers & Gateways", q: "What is the primary purpose of a Router?", o: ["To connect devices within a single room.", "To route traffic between different networks (e.g., LAN to WAN).", "To convert digital signals to analog.", "To store web pages."], a: 1, e: "Routers connect distinct networks (like your home LAN to the ISP WAN) and direct traffic between them." },
-            { c: "Routers & Gateways", q: "Routers operate at which OSI layer?", o: ["Physical", "Data Link", "Network", "Application"], a: 2, e: "Routers use IP addresses for logical addressing, which is the definition of Layer 3 (Network)." },
-            { c: "Routers & Gateways", q: "Which address does a Router primarily use?", o: ["Physical Address (MAC)", "Logical Address (IP)", "Email Address", "Street Address"], a: 1, e: "Routers route packets based on the destination IP (Logical) address." },
-            { c: "Routers & Gateways", q: "What is a 'Routing Table'?", o: ["A physical table where the router sits.", "A database stored in the router that lists routes to particular network destinations.", "A list of all users on the network.", "A spreadsheet of network costs."], a: 1, e: "A routing table is the internal map the router uses to decide which interface to send a packet out of." },
-            { c: "Routers & Gateways", q: "A Bridge is used to:", o: ["Connect two different types of networks (e.g., AppleTalk to TCP/IP).", "Connect two network segments to reduce traffic/collisions.", "Connect a computer to a printer.", "Connect a modem to a phone line."], a: 1, e: "A Bridge connects two LAN segments, filtering traffic between them to keep local traffic local and reduce collisions." },
-            { c: "Routers & Gateways", q: "How does a Bridge reduce network traffic?", o: ["By blocking all broadcasts.", "By dividing a large network into smaller collision domains.", "By increasing the speed of the cables.", "By compressing data."], a: 1, e: "By filtering packets based on MAC address, a Bridge prevents unnecessary traffic from crossing into the other segment." },
-            { c: "Routers & Gateways", q: "What does 'Modem' stand for?", o: ["Modern Emulator", "Modulation Demodulation", "Mobile Demobilizer", "Mono-directional Emulator"], a: 1, e: "MO-dulator DE-Modulator: converts digital to analog and back." },
-            { c: "Routers & Gateways", q: "The process of converting digital computer signals to analog phone signals is:", o: ["Demodulation", "Modulation", "Routing", "Switching"], a: 1, e: "Modulation is putting digital data onto an analog carrier wave." },
-            { c: "Routers & Gateways", q: "The process of converting analog phone signals back to digital computer signals is:", o: ["Demodulation", "Modulation", "Encoding", "Decoding"], a: 0, e: "Demodulation is extracting the digital data from the analog wave." },
-            { c: "Routers & Gateways", q: "Which device is required to connect a home network to an ISP via a telephone line?", o: ["Switch", "Hub", "Modem", "Bridge"], a: 2, e: "A Modem is needed to translate the digital LAN signals to the analog phone line signals." },
-            { c: "Routers & Gateways", q: "A Gateway is capable of:", o: ["Connecting two networks with different architectures/protocols.", "Only connecting two identical LANs.", "Only amplifying signals.", "Storing files for users."], a: 0, e: "Gateways act as translators between completely different systems (e.g., TCP/IP to a Mainframe system)." },
-            { c: "Routers & Gateways", q: "Which device operates at the highest layers of the OSI model (up to Layer 7)?", o: ["Switch", "Router", "Gateway", "Repeater"], a: 2, e: "Because they translate protocols and data formats, Gateways operate at all layers up to Layer 7." },
-            { c: "Routers & Gateways", q: "If you need to connect a TCP/IP network to a legacy SNA mainframe network, you need a:", o: ["Bridge", "Router", "Gateway", "Hub"], a: 2, e: "This requires protocol translation, which is the specific job of a Gateway." },
-            { c: "Routers & Gateways", q: "Which device is often described as the 'traffic cop' of the Internet?", o: ["Hub", "Router", "Modem", "Repeater"], a: 1, e: "Routers direct traffic at intersections (networks), making them the traffic cops." },
-            { c: "Routers & Gateways", q: "Broadcast storms can be stopped by which device?", o: ["Hub", "Repeater", "Router", "Bridge (standard)"], a: 2, e: "Routers do not forward Broadcast packets by default, thus containing broadcast storms to a single LAN." },
-            { c: "Routers & Gateways", q: "In a home setup, the 'box' from your ISP often combines which functions?", o: ["Modem, Router, Switch, and Wireless Access Point.", "Only Modem.", "Only Switch.", "Hub and Bridge."], a: 0, e: "Modern home routers are actually 'Integrated Services Devices' combining all these functions." },
-            { c: "Routers & Gateways", q: "A 'Default Gateway' setting on your PC usually refers to:", o: ["The IP address of your Router.", "The IP address of your Switch.", "The IP address of the Internet.", "The IP address of your Printer."], a: 0, e: "The Default Gateway is the local router interface that leads to the outside world." },
-            { c: "Routers & Gateways", q: "Bridges use which address to filter traffic?", o: ["IP Address", "MAC Address", "Port Address", "URL"], a: 1, e: "Bridges are Layer 2 devices, so they use MAC addresses." },
-            { c: "Routers & Gateways", q: "Why are Gateways generally slower than Routers?", o: ["They have older hardware.", "They perform complex protocol translations.", "They use wireless only.", "They are not slower."], a: 1, e: "Converting data formats and protocols requires significantly more processing power than simple routing." },
-            { c: "Routers & Gateways", q: "Which device would you use to extend the length of a network cable segment without analyzing the data?", o: ["Repeater", "Bridge", "Router", "Gateway"], a: 0, e: "A Repeater simply regenerates the electrical signal to travel further; it does not analyze data." },
+            // --- SERVERS & ROLES (31-80) ---
+            { q: "Which server specifically manages files?", o: ["Print Server", "File Server", "Web Server", "Proxy Server"], a: 1, exp: "File Servers store and manage shared files." },
+            { q: "Which server manages printing queues?", o: ["Application Server", "Print Server", "Mail Server", "List Server"], a: 1, exp: "Print Servers manage access to shared printers." },
+            { q: "Which server acts as a security intermediary/cache?", o: ["Proxy Server", "Telnet Server", "Fax Server", "Groupware Server"], a: 0, exp: "Proxy Servers cache content and filter requests." },
+            { q: "Which server enables remote command-line login?", o: ["Web Server", "Telnet Server", "Mail Server", "Audio Server"], a: 1, exp: "Telnet Servers allow remote terminal access." },
+            { q: "Which server handles email storage/transfer?", o: ["News Server", "Mail Server", "Web Server", "FTP Server"], a: 1, exp: "Mail Servers handle SMTP/POP3/IMAP traffic." },
+            { q: "Which server runs business logic/software backend?", o: ["Application Server", "File Server", "Print Server", "Fax Server"], a: 0, exp: "Application Servers run specific software for clients." },
+            { q: "Which server manages email distribution lists?", o: ["List Server", "Groupware Server", "Chat Server", "News Server"], a: 0, exp: "List Servers manage automated mailing lists." },
+            { q: "Which server streams multimedia?", o: ["Audio/Video Server", "Proxy Server", "IRC Server", "Telnet Server"], a: 0, exp: "Audio/Video Servers stream media content." },
+            { q: "Which server enables real-time text chat (IRC)?", o: ["Chat Server", "Mail Server", "List Server", "News Server"], a: 0, exp: "Chat Servers facilitate real-time messaging." },
+            { q: "Which server hosts websites?", o: ["Web Server", "FTP Server", "Telnet Server", "Print Server"], a: 0, exp: "Web Servers deliver HTML pages via HTTP." },
+            { q: "Which server facilitates collaboration (calendars, etc.)?", o: ["Groupware Server", "List Server", "Proxy Server", "Telnet Server"], a: 0, exp: "Groupware Servers enable team collaboration." },
+            { q: "Which server handles file transfers via a specific protocol?", o: ["Web Server", "FTP Server", "Print Server", "Mail Server"], a: 1, exp: "FTP Servers are dedicated to uploading/downloading files." },
+            { q: "Which server manages Usenet newsgroups?", o: ["News Server", "Web Server", "Chat Server", "Audio Server"], a: 0, exp: "News Servers host and distribute Usenet articles." },
+            { q: "Which server centralizes faxing capabilities?", o: ["Fax Server", "Print Server", "Mail Server", "Web Server"], a: 0, exp: "Fax Servers send/receive faxes digitally." },
+            { q: "Which server provides a lookup index for data?", o: ["Directory/Database Server", "Print Server", "Fax Server", "Telnet Server"], a: 0, exp: "Directory/Database Servers organize searchable data." },
+            { q: "Apache and IIS are examples of software for which server?", o: ["Web Server", "Fax Server", "Print Server", "List Server"], a: 0, exp: "Apache and IIS are common Web Server software." },
+            { q: "Exchange and Sendmail are examples of which server?", o: ["Web Server", "Mail Server", "Proxy Server", "Chat Server"], a: 1, exp: "These are common Mail Server applications." },
+            { q: "Lotus Notes is an example of:", o: ["Groupware", "Audio Server", "Proxy Server", "Telnet"], a: 0, exp: "Lotus Notes is classic Groupware software." },
+            { q: "SQL Server and Oracle are examples of:", o: ["Database Servers", "Web Servers", "Proxy Servers", "List Servers"], a: 0, exp: "These are Database Management Systems." },
+            { q: "Squid is a popular software for which server type?", o: ["Proxy Server", "Fax Server", "Chat Server", "Print Server"], a: 0, exp: "Squid is a widely used caching Proxy Server." },
+            { q: "RealServer and QuickTime are associated with:", o: ["Audio/Video Servers", "Print Servers", "Mail Servers", "List Servers"], a: 0, exp: "These are associated with streaming media." },
+            { q: "Which server type helps hide the internal network IP?", o: ["Proxy Server", "File Server", "Print Server", "List Server"], a: 0, exp: "Proxies act on behalf of the client, hiding their IP." },
+            { q: "Which server allows a user to run a program on the server's CPU?", o: ["Application Server", "File Server", "Print Server", "Proxy Server"], a: 0, exp: "App servers execute logic/code on the server side." },
+            { q: "Which server stores messages for users to read later?", o: ["Mail Server", "Chat Server", "Audio Server", "Telnet Server"], a: 0, exp: "Mail servers store emails until the client retrieves them." },
+            { q: "Which server type is associated with 'store-and-forward'?", o: ["Mail Server", "Chat Server", "Web Server", "Audio Server"], a: 0, exp: "Email is a store-and-forward system." },
+            { q: "Which server type is associated with 'real-time' communication?", o: ["Chat Server", "Mail Server", "File Server", "Proxy Server"], a: 0, exp: "Chat/IRC is real-time." },
+            { q: "A server that caches frequent web pages is a:", o: ["Proxy Server", "Web Server", "List Server", "Fax Server"], a: 0, exp: "Proxies cache pages to speed up access." },
+            { q: "A server that holds a shared 'contact list' or 'calendar' is:", o: ["Groupware Server", "Web Server", "Proxy Server", "Fax Server"], a: 0, exp: "This is a core function of Groupware." },
+            { q: "Which server type replaced the need for physical fax machines?", o: ["Fax Server", "Print Server", "Mail Server", "List Server"], a: 0, exp: "Fax servers digitize the fax process." },
+            { q: "Which server allows 'posting' to a public discussion board?", o: ["News Server", "FTP Server", "Print Server", "Proxy Server"], a: 0, exp: "News servers (Usenet) allow public posting." },
+            { q: "If a user wants to download a driver file, they might use an:", o: ["FTP Server", "Print Server", "Telnet Server", "Chat Server"], a: 0, exp: "FTP is designed for file downloads." },
+            { q: "Which server acts as a 'gatekeeper' for internet access?", o: ["Proxy Server", "File Server", "Audio Server", "List Server"], a: 0, exp: "Proxies often control/monitor outbound internet access." },
+            { q: "A 'Listserv' is related to which server type?", o: ["List Server", "File Server", "Print Server", "Chat Server"], a: 0, exp: "Listserv is a software for List Servers." },
+            { q: "Which server type requires a 'Terminal Emulator' client?", o: ["Telnet Server", "Web Server", "Print Server", "Audio Server"], a: 0, exp: "Telnet requires a terminal client (like PuTTY)." },
+            { q: "Which server manages database records?", o: ["Database Server", "File Server", "Proxy Server", "Web Server"], a: 0, exp: "Database servers manage structured records." },
+            { q: "Which server type is crucial for e-commerce transactions?", o: ["Web/App/DB Server", "Print Server", "Fax Server", "News Server"], a: 0, exp: "E-commerce relies on Web, App, and Database servers." },
+            { q: "Which server type handles large-scale video distribution?", o: ["Audio/Video Server", "List Server", "Telnet Server", "Fax Server"], a: 0, exp: "A/V servers handle bandwidth for video." },
+            { q: "Which server type allows you to 'subscribe' or 'unsubscribe'?", o: ["List Server", "File Server", "Print Server", "Proxy Server"], a: 0, exp: "List servers manage subscriptions." },
+            { q: "Which server type provides 'Intranet' pages?", o: ["Web Server", "Telnet Server", "Fax Server", "News Server"], a: 0, exp: "Intranets use Web Servers internally." },
+            { q: "Which server type might use the protocol NNTP?", o: ["News Server", "Web Server", "Mail Server", "File Server"], a: 0, exp: "Network News Transfer Protocol (NNTP) is for News Servers." },
+            { q: "Which server type might use the protocol SMTP?", o: ["Mail Server", "Web Server", "File Server", "Proxy Server"], a: 0, exp: "Simple Mail Transfer Protocol is for email." },
+            { q: "Which server type might use the protocol HTTP?", o: ["Web Server", "Mail Server", "News Server", "FTP Server"], a: 0, exp: "Hypertext Transfer Protocol is for Web Servers." },
+            { q: "Which server type might use the protocol FTP?", o: ["FTP Server", "Web Server", "Mail Server", "Telnet Server"], a: 0, exp: "File Transfer Protocol is for FTP Servers." },
+            { q: "Which server type allows multiple users to edit a document together?", o: ["Groupware Server", "Proxy Server", "List Server", "News Server"], a: 0, exp: "Groupware facilitates collaborative editing." },
+            { q: "Which server handles spooling?", o: ["Print Server", "Web Server", "Proxy Server", "Fax Server"], a: 0, exp: "Print servers 'spool' jobs to the printer." },
+            { q: "Which server type is an 'Answering Machine' for faxes?", o: ["Fax Server", "Voice Server", "Mail Server", "Web Server"], a: 0, exp: "Fax servers receive faxes like an answering machine." },
+            { q: "Which server type reduces bandwidth usage by saving copies?", o: ["Proxy Server", "Mail Server", "Chat Server", "List Server"], a: 0, exp: "Caching proxies reduce bandwidth usage." },
+            { q: "Which server type is used for 'Mass Mailing'?", o: ["List Server", "File Server", "Proxy Server", "Telnet Server"], a: 0, exp: "List servers are designed for mass distribution." },
+            { q: "Which server type allows you to work on a mainframe from a PC?", o: ["Telnet Server", "Web Server", "File Server", "Print Server"], a: 0, exp: "Telnet provides a window into the mainframe." },
+            { q: "Which server type stores the 'Company Directory'?", o: ["Directory Server", "Print Server", "Proxy Server", "Fax Server"], a: 0, exp: "Directory servers store user/resource lists." },
 
-            // Section 3
-            { c: "Microwave Transmission", q: "Microwave transmission is classified as:", o: ["Wired media.", "Wireless Line-of-Sight media.", "Fiber optic media.", "Submarine media."], a: 1, e: "Microwaves travel through the air but require a clear, straight path (Line-of-Sight)." },
-            { c: "Microwave Transmission", q: "What is the critical requirement for Microwave antennas?", o: ["They must be underwater.", "They must have a clear physical path (Line of Sight) between them.", "They must be hidden indoors.", "They must be moving."], a: 1, e: "Due to the high frequency, any obstacle will block the signal." },
-            { c: "Microwave Transmission", q: "Microwave systems are often used for:", o: ["Connecting a mouse to a laptop.", "Long-distance, high-speed point-to-point links (e.g., between buildings or towers).", "Storing backup data.", "Cooling network equipment."], a: 1, e: "They are ideal for bridging gaps where running cable is expensive or impossible." },
-            { c: "Microwave Transmission", q: "Which factor can negatively affect Microwave transmission?", o: ["Sunlight.", "Physical obstructions (buildings, mountains) and weather (heavy rain).", "The color of the tower.", "The operating system used."], a: 1, e: "Rain fade and physical buildings are the primary enemies of microwave links." },
-            { c: "Microwave Transmission", q: "Microwave signals are typically:", o: ["Omnidirectional (go everywhere).", "Unidirectional/Focused (Point-to-Point).", "Wired.", "Digital only."], a: 1, e: "Microwaves use parabolic dishes to focus energy into a tight beam." },
-            { c: "Microwave Transmission", q: "Why are Microwave dishes often placed on tall towers?", o: ["To be closer to the sun.", "To avoid obstacles on the ground and clear the curvature of the Earth.", "To look aesthetically pleasing.", "To prevent theft."], a: 1, e: "Height is needed to clear trees, buildings, and the earth's curvature for long-distance links." },
-            { c: "Microwave Transmission", q: "Microwave is an alternative to cabling when:", o: ["Cabling is too expensive or physically impossible (e.g., across a river).", "You need a very short connection (1 meter).", "You are indoors.", "You want the slowest speed possible."], a: 0, e: "It acts as a 'wireless cable' for difficult terrain." },
+            // --- MODELS & ARCHITECTURE (81-110) ---
+            { q: "In Client-Server, who is in charge of security?", o: ["Administrator", "Each User", "The ISP", "Nobody"], a: 0, exp: "Centralized admin controls security." },
+            { q: "In Peer-to-Peer, who is in charge of security?", o: ["Each User", "Administrator", "The ISP", "Microsoft"], a: 0, exp: "Each user sets their own permissions." },
+            { q: "Which model is easier to set up?", o: ["Peer-to-Peer", "Client-Server", "Mainframe", "WAN"], a: 0, exp: "P2P requires no specialized OS or hardware." },
+            { q: "Which model is more scalable?", o: ["Client-Server", "Peer-to-Peer", "Bus", "Ring"], a: 0, exp: "Client-Server scales better to thousands of users." },
+            { q: "Which model has a 'Single Point of Failure'?", o: ["Client-Server", "Peer-to-Peer", "Mesh", "Ad-hoc"], a: 0, exp: "If the server goes down, services stop." },
+            { q: "Hybrid networks combine:", o: ["Client-Server and P2P", "Hubs and Switches", "Wired and Wireless", "LAN and WAN"], a: 0, exp: "Hybrid models use both centralized and decentralized logic." },
+            { q: "Which model is best for a home with 2 PCs?", o: ["Peer-to-Peer", "Client-Server", "Enterprise", "Backbone"], a: 0, exp: "P2P is sufficient and cost-effective for 2 PCs." },
+            { q: "Which model needs a specialized Network Operating System (NOS)?", o: ["Client-Server", "Peer-to-Peer", "Stand-alone", "Direct Cable"], a: 0, exp: "Servers require NOS (e.g., Windows Server, Linux)." },
+            { q: "Which model requires a dedicated administrator?", o: ["Client-Server", "Peer-to-Peer", "Workgroup", "HomeGroup"], a: 0, exp: "Client-Server requires management skill." },
+            { q: "In P2P, resources are stored:", o: ["On individual drives", "On a central drive", "In the cloud", "On a bridge"], a: 0, exp: "Resources are scattered across peers." },
+            { q: "In Client-Server, backups are:", o: ["Centralized", "Decentralized", "Impossible", "Manual only"], a: 0, exp: "You only need to backup the server." },
+            { q: "A 'Domain' is associated with:", o: ["Client-Server", "Peer-to-Peer", "Workgroup", "Standalone"], a: 0, exp: "Windows Domains are Client-Server structures." },
+            { q: "A 'Workgroup' is associated with:", o: ["Peer-to-Peer", "Client-Server", "Mainframe", "Terminal"], a: 0, exp: "Workgroups are P2P structures." },
+            { q: "Which model is more expensive to implement?", o: ["Client-Server", "Peer-to-Peer", "Ad-hoc", "Direct connection"], a: 0, exp: "Server hardware and software licenses are costly." },
+            { q: "Hybrid models allows users to:", o: ["Access servers and share local files", "Only access servers", "Only share local files", "Use no passwords"], a: 0, exp: "It offers the flexibility of both." },
+            { q: "Client-Server is also known as:", o: ["Server-based", "Workgroup", "Distributed", "Ad-hoc"], a: 0, exp: "It focuses on the server." },
+            { q: "Peer-to-Peer is also known as:", o: ["Workgroup", "Domain", "Centralized", "Terminal"], a: 0, exp: "Workgroup is the common Windows term for P2P." },
+            { q: "Performance in P2P depends on:", o: ["The user's machine", "The central server", "The administrator", "The Gateway"], a: 0, exp: "If a user turns off their PC, resources are gone." },
+            { q: "Access control in Client-Server is:", o: ["Centralized", "Distributed", "Random", "Non-existent"], a: 0, exp: "One database of users controls access." },
+            { q: "Access control in P2P is:", o: ["Distributed", "Centralized", "Unified", "Global"], a: 0, exp: "Each PC has its own user list." },
+            { q: "Which model supports thousands of users best?", o: ["Client-Server", "Peer-to-Peer", "Direct Cable", "Bluetooth"], a: 0, exp: "Client-Server is built for scale." },
+            { q: "Which model is also called 'Two-Tier'?", o: ["Client-Server", "Peer-to-Peer", "Hub-Spoke", "Ring"], a: 0, exp: "Client-Server is often a 2-tier architecture." },
+            { q: "In a Hybrid model, a desktop computer can act as:", o: ["Both Client and Server", "Client only", "Server only", "Router only"], a: 0, exp: "It requests from the Server but serves files to peers." },
+            { q: "Which model uses 'Shared Resources'?", o: ["Both", "Client-Server only", "P2P only", "Neither"], a: 0, exp: "Both models exist to share resources." },
+            { q: "Which model is safer for sensitive data?", o: ["Client-Server", "Peer-to-Peer", "Open", "Public"], a: 0, exp: "Centralized security allows tighter control." },
+            { q: "If you have 50 employees, which model is recommended?", o: ["Client-Server", "Peer-to-Peer", "Sneakernet", "Bluetooth"], a: 0, exp: "50 users is too hard to manage in P2P." },
+            { q: "If you have 3 employees, which model is recommended?", o: ["Peer-to-Peer", "Client-Server", "Mainframe", "Cloud"], a: 0, exp: "P2P is sufficient and cheaper for 3 users." },
+            { q: "Which device is central to a Star topology (usually)?", o: ["Switch/Hub", "Repeater", "Modem", "Gateway"], a: 0, exp: "Hubs or Switches form the center of a Star." },
+            { q: "The Internet is best described as:", o: ["A network of networks", "A single server", "A large hub", "A P2P group"], a: 0, exp: "It is a global collection of interconnected networks." },
+            { q: "Intranets typically use which model?", o: ["Client-Server", "Peer-to-Peer", "Ad-hoc", "Mesh"], a: 0, exp: "Intranets are internal Client-Server webs." },
 
-            // Section 4
-            { c: "Client/Server Model", q: "In the Client/Server model, the 'Client' is:", o: ["The provider of resources.", "The requester of resources.", "The network cable.", "The database itself."], a: 1, e: "Clients request services (files, print jobs, web pages) from servers." },
-            { c: "Client/Server Model", q: "In the Client/Server model, the 'Server' is:", o: ["The requester of resources.", "The provider of resources and services.", "The user.", "The screen."], a: 1, e: "Servers fulfill the requests made by clients." },
-            { c: "Client/Server Model", q: "Which is a primary advantage of a Client/Server network over Peer-to-Peer?", o: ["Lower cost.", "Centralized administration and security.", "No need for an administrator.", "Easier to set up."], a: 1, e: "Centralization allows for one admin to manage security, backups, and users for everyone." },
-            { c: "Client/Server Model", q: "In a Client/Server network, where are user accounts usually managed?", o: ["On each individual computer.", "On the Central Server (Domain Controller).", "On the Router.", "On the Printer."], a: 1, e: "Accounts are stored in a central database (like Active Directory) on the server." },
-            { c: "Client/Server Model", q: "Scalability in Client/Server networks means:", o: ["It is hard to add new users.", "It is easy to add new clients and servers without disrupting the network.", "You must weigh the servers.", "The network gets smaller over time."], a: 1, e: "Client/Server architecture is designed to grow easily." },
-            { c: "Client/Server Model", q: "Which software is typically more expensive?", o: ["Client Operating Systems (e.g., Windows 10 Home).", "Server Operating Systems (e.g., Windows Server).", "Freeware games.", "Notepad."], a: 1, e: "Server OS licenses are significantly more expensive due to their advanced features and capabilities." },
-            { c: "Client/Server Model", q: "If the main Server fails in a Client/Server network:", o: ["Users cannot access network resources (files, login).", "Users can still access everything locally on the server.", "The internet shuts down.", "Nothing happens."], a: 0, e: "Since resources are centralized, the failure of the central point (Server) disrupts access for everyone." },
-            { c: "Client/Server Model", q: "A 'Thin Client' is:", o: ["A very skinny computer.", "A computer that relies heavily on the server for processing and storage.", "A laptop.", "A mobile phone."], a: 1, e: "Thin clients have very little local power and depend on the server to do the heavy lifting." },
-            { c: "Client/Server Model", q: "A 'Fat Client' (or Thick Client) is:", o: ["A computer that performs most of the processing itself and uses the server mainly for storage.", "A large server.", "A heavy monitor.", "A broken computer."], a: 0, e: "Fat clients are standard PCs that run their own apps and OS locally." },
-            { c: "Client/Server Model", q: "Distributed Processing often involves:", o: ["One computer doing everything.", "Splitting a task between the Client and the Server.", "Printing a document.", "Turning off the network."], a: 1, e: "It leverages the power of both machines to complete a task efficiently." },
+            // --- TRUE/FALSE & SCENARIOS (111-135) ---
+            { q: "True/False: A Hub divides bandwidth among ports.", o: ["True", "False"], a: 0, exp: "True. Hubs share bandwidth (Half-duplex)." },
+            { q: "True/False: A Switch provides dedicated bandwidth per port.", o: ["True", "False"], a: 0, exp: "True. Switches offer full bandwidth to each port." },
+            { q: "True/False: Routers forward broadcasts by default.", o: ["False", "True"], a: 0, exp: "False. Routers block broadcasts." },
+            { q: "True/False: A Bridge connects two different protocols.", o: ["False", "True"], a: 0, exp: "False. Gateways do that. Bridges need same protocol." },
+            { q: "True/False: Peer-to-Peer networks are expensive.", o: ["False", "True"], a: 0, exp: "False. They are cheap (no server needed)." },
+            { q: "True/False: Microwave transmission can go through mountains.", o: ["False", "True"], a: 0, exp: "False. It requires line-of-sight." },
+            { q: "True/False: A Modem converts Digital to Analog.", o: ["True", "False"], a: 0, exp: "True. That is Modulation." },
+            { q: "True/False: A Switch reduces collision domains.", o: ["True", "False"], a: 0, exp: "True. Each port is a collision domain." },
+            { q: "True/False: A Hub reduces collision domains.", o: ["False", "True"], a: 0, exp: "False. The whole hub is one collision domain." },
+            { q: "True/False: Telnet is a secure way to access a server.", o: ["False", "True"], a: 0, exp: "False. Telnet sends text in clear (unencrypted)." },
+            { q: "Scenario: You need to connect your home LAN to the ISP via phone line.", o: ["Use a Modem", "Use a Hub", "Use a Bridge", "Use a Switch"], a: 0, exp: "Modems handle the phone line signal conversion." },
+            { q: "Scenario: You want to filter traffic between Sales and HR departments on the same floor.", o: ["Use a Bridge/Switch", "Use a Hub", "Use a Repeater", "Use a Modem"], a: 0, exp: "Bridges/Switches can filter traffic between segments." },
+            { q: "Scenario: You need to send data 50km using radio waves.", o: ["Microwave", "Ethernet", "Fiber", "Coax"], a: 0, exp: "Microwave is suitable for long-range wireless." },
+            { q: "Scenario: A server is hosting the company website internally.", o: ["Web Server", "Mail Server", "Telnet Server", "List Server"], a: 0, exp: "Internal websites are hosted on Web Servers." },
+            { q: "Scenario: You need to automatically email 500 customers a newsletter.", o: ["List Server", "File Server", "Proxy Server", "Chat Server"], a: 0, exp: "List servers automate mass emailing." },
+            { q: "Scenario: Employees need to schedule meetings and see free time.", o: ["Groupware Server", "Web Server", "Video Server", "News Server"], a: 0, exp: "Calendaring is a Groupware feature." },
+            { q: "Scenario: You want to block employees from Facebook.", o: ["Proxy Server", "File Server", "Print Server", "Mail Server"], a: 0, exp: "Proxies can filter/block specific URLs." },
+            { q: "Scenario: You are connecting a Token Ring network to an Ethernet network.", o: ["Gateway", "Bridge", "Hub", "Repeater"], a: 0, exp: "Gateways translate between different architectures." },
+            { q: "Scenario: Signal is getting weak over a long cable run.", o: ["Repeater", "Gateway", "Router", "Bridge"], a: 0, exp: "Repeaters boost/regenerate the signal." },
+            { q: "Scenario: You want to upload a large file to the company server.", o: ["FTP", "Telnet", "Print", "Chat"], a: 0, exp: "FTP is the standard for file uploads." },
+            { q: "True/False: A Server can perform multiple roles (e.g., File and Print).", o: ["True", "False"], a: 0, exp: "True. One machine can run multiple server softwares." },
+            { q: "True/False: Clients usually have more power than Servers.", o: ["False", "True"], a: 0, exp: "False. Servers are usually more powerful." },
+            { q: "True/False: P2P networks are easy to back up.", o: ["False", "True"], a: 0, exp: "False. Data is scattered everywhere." },
+            { q: "True/False: A Gateway operates at all layers of the OSI model.", o: ["True", "False"], a: 0, exp: "True. Gateways translate entire protocol stacks." },
+            { q: "True/False: Switches are 'dumber' than Hubs.", o: ["False", "True"], a: 0, exp: "False. Switches are intelligent." },
 
-            // Section 5
-            { c: "Types of Servers", q: "What is the main function of a File Server?", o: ["To host websites.", "To store, manage, and secure shared files/folders.", "To route emails.", "To manage printers."], a: 1, e: "File servers act as a central repository for company documents and data." },
-            { c: "Types of Servers", q: "What is a Print Server responsible for?", o: ["Managing print queues and sharing printers.", "Designing graphics for printing.", "Selling printers.", "Scanning documents only."], a: 0, e: "It manages the queue of documents waiting to be printed, allowing multiple users to share one printer." },
-            { c: "Types of Servers", q: "Which server runs applications like SQL or Oracle?", o: ["Web Server", "Database Server", "Print Server", "Proxy Server"], a: 1, e: "SQL and Oracle are Database Management Systems (DBMS)." },
-            { c: "Types of Servers", q: "A Database Server primarily deals with:", o: ["Unstructured text files.", "Structured data, queries, and records.", "Email messages.", "Audio files."], a: 1, e: "Databases organize data into tables and records for easy retrieval via queries." },
-            { c: "Types of Servers", q: "A Web Server uses which protocol to deliver pages?", o: ["FTP", "HTTP/HTTPS", "SMTP", "SNMP"], a: 1, e: "HyperText Transfer Protocol (HTTP) is the language of the web." },
-            { c: "Types of Servers", q: "Apache and IIS are examples of software for which type of server?", o: ["Database Server", "Web Server", "Print Server", "File Server"], a: 1, e: "Apache and Internet Information Services (IIS) are the most popular web server software." },
-            { c: "Types of Servers", q: "A Mail Server handles:", o: ["Only sending emails.", "Only receiving emails.", "Storing, sending, and receiving emails.", "Writing emails for you."], a: 2, e: "Mail servers (MTA) handle the full flow of email traffic." },
-            { c: "Types of Servers", q: "Which protocols are associated with Mail Servers?", o: ["HTTP and FTP.", "SMTP, POP3, IMAP.", "TCP and UDP.", "IP and MAC."], a: 1, e: "SMTP (Sending), POP3/IMAP (Receiving/Retrieving)." },
-            { c: "Types of Servers", q: "What is the purpose of a Proxy Server?", o: ["To act as an intermediary, improving security and caching web content.", "To store databases.", "To print faster.", "To connect cables."], a: 0, e: "Proxies sit between the user and the internet, filtering requests and saving copies of sites (caching)." },
-            { c: "Types of Servers", q: "Proxy Servers are often used to:", o: ["Bypass firewalls (sometimes) or enforce content filtering (corporate).", "Increase internet speed by 1000%.", "Store emails.", "Host the company website."], a: 0, e: "They are used for control: either to hide the user (bypass) or control the user (filtering)." },
-            { c: "Types of Servers", q: "An Application Server:", o: ["Stores the installer files only.", "Runs the backend logic of business applications for clients.", "Is used for typing documents.", "Is a backup server."], a: 1, e: "It runs the actual code/logic of an application (middle-tier) rather than just serving data." },
-            { c: "Types of Servers", q: "A Real-Time Communication Server handles:", o: ["Old archived emails.", "Instant messaging, VoIP (Voice over IP), and presence information.", "Delayed file transfers.", "Static web pages."], a: 1, e: "RTC requires immediate transmission for things like chat and voice calls." },
-            { c: "Types of Servers", q: "A List Server manages:", o: ["To-do lists.", "Mailing lists and mass distribution of emails.", "Shopping lists.", "Lists of files."], a: 1, e: "List servers automate subscription and sending of mass emails." },
-            { c: "Types of Servers", q: "A DHCP Server is responsible for:", o: ["Resolving names to IPs.", "Automating the assignment of IP addresses to clients.", "Routing data.", "Protecting against viruses."], a: 1, e: "Dynamic Host Configuration Protocol (DHCP) automatically hands out IP addresses to devices joining the network." },
-            { c: "Types of Servers", q: "A DNS Server is responsible for:", o: ["Assigning IPs.", "Resolving Hostnames (URLs) to IP addresses.", "Sending emails.", "Storing files."], a: 1, e: "Domain Name System (DNS) is the phonebook of the internet, converting 'google.com' to '142.250.x.x'." },
-            { c: "Types of Servers", q: "Which server verifies a user's username and password?", o: ["Authentication Server (Domain Controller).", "Print Server", "Web Server", "DHCP Server"], a: 0, e: "The Domain Controller holds the directory of credentials and verifies identity." },
-            { c: "Types of Servers", q: "Caching on a Proxy Server helps to:", o: ["Delete data.", "Speed up access to frequently visited websites by storing a local copy.", "Encrypt data.", "Slow down the network."], a: 1, e: "By serving a local copy, it saves bandwidth and loads faster." },
-            { c: "Types of Servers", q: "Which server would be most intensive on Hard Drive I/O (Input/Output)?", o: ["A heavily used File/Database Server.", "A Print Server.", "A DNS Server.", "A DHCP Server."], a: 0, e: "Database and File servers are constantly reading and writing large amounts of data to disks." },
-            { c: "Types of Servers", q: "Which server typically needs the most CPU processing power?", o: ["File Server.", "Application/Database Server performing complex calculations.", "Print Server.", "Simple Web Server."], a: 1, e: "Running application logic and complex database queries is CPU intensive." },
-            { c: "Types of Servers", q: "What does a 'Dedicated Server' imply?", o: ["It is used by only one person.", "It performs only one specific role (e.g., only Web Hosting) for efficiency.", "It is loyal to the owner.", "It is a small computer."], a: 1, e: "Dedicated means it is dedicated to a single task, optimizing performance for that task." },
-            { c: "Types of Servers", q: "A 'Non-Dedicated Server' might:", o: ["Fail often.", "Perform multiple roles (File, Print, and Web) simultaneously.", "Be a client computer.", "Be turned off."], a: 1, e: "Small businesses often use one server to do everything (File, Print, Email) to save money." },
-            { c: "Types of Servers", q: "In a Peer-to-Peer network, who acts as the server?", o: ["Only one specific computer.", "Any computer can act as both client and server.", "No one.", "The router."], a: 1, e: "Peers are equals; my computer can share files with you (Server role) while I download files from you (Client role)." },
-            { c: "Types of Servers", q: "Which server is essential for an Intranet?", o: ["Web Server (internal).", "Public Game Server.", "External Mail Server.", "Modem."], a: 0, e: "An Intranet is essentially a private website, requiring a Web Server to host it." },
-
-            // Section 6
-            { c: "Network Models", q: "A Hybrid Network combines:", o: ["Star and Bus topologies.", "Client/Server and Peer-to-Peer characteristics.", "Wired and Wireless connections.", "Fiber and Copper cables."], a: 1, e: "Most modern networks are hybrid: they have servers for critical stuff, but users also share files directly (AirDrop/Teams)." },
-            { c: "Network Models", q: "Why might a company choose a Hybrid model?", o: ["To have no security.", "To allow centralized critical data (Server) but flexible local sharing (P2P).", "To save money on servers.", "Because they have no choice."], a: 1, e: "It offers the best of both worlds: Security/Backup for important data, convenience for temporary sharing." },
-            { c: "Network Models", q: "Peer-to-Peer networks are best suited for:", o: ["Large corporations with 10,000 users.", "Small offices or home networks (typically < 10 users).", "Global ISPs.", "Government databases."], a: 1, e: "P2P becomes unmanageable with many users because there is no central administration." },
-            { c: "Network Models", q: "Security in a Peer-to-Peer network is:", o: ["Centralized.", "Decentralized (User-managed).", "Stronger than Client/Server.", "Managed by the government."], a: 1, e: "Each user sets their own passwords and permissions, making it decentralized." },
-            { c: "Network Models", q: "In a Windows Domain environment (Client/Server), you log in to:", o: ["The local computer only.", "The Domain (authenticated by the server).", "The internet directly.", "The printer."], a: 1, e: "Your credentials are sent to the Domain Controller for verification." },
-            { c: "Network Models", q: "In a Workgroup environment (Peer-to-Peer), you log in to:", o: ["The local computer.", "A central server.", "The router.", "A cloud database."], a: 0, e: "Your account exists only on that specific machine's local database (SAM)." },
-
-            // Section 7
-            { c: "Scenarios", q: "Scenario: Users complain the network is slow. You find a Hub is being used. Replacing it with a Switch will:", o: ["Make it slower.", "Improve performance by reducing collisions.", "Disconnect everyone.", "Change their IP addresses."], a: 1, e: "Switches eliminate collisions and provide dedicated bandwidth, drastically improving speed." },
-            { c: "Scenarios", q: "Scenario: You need to link two office buildings 5km apart with a clear line of sight, but you cannot run cables. Best solution?", o: ["Long Ethernet cord.", "Microwave Link.", "Bluetooth.", "Hub."], a: 1, e: "Microwave is designed exactly for this Line-of-Sight, long-distance scenario." },
-            { c: "Scenarios", q: "Scenario: You cannot access 'google.com' but you CAN access '142.250.1.1'. What is likely down?", o: ["The Router.", "The DNS Server.", "The DHCP Server.", "The Switch."], a: 1, e: "Connectivity exists (IP works), but name resolution failed. That's a DNS issue." },
-            { c: "Scenarios", q: "Scenario: A computer cannot get an IP address automatically. Which server is likely failing?", o: ["Web Server.", "DHCP Server.", "Mail Server.", "File Server."], a: 1, e: "DHCP is responsible for automatic IP assignment." },
-            { c: "Scenarios", q: "Scenario: You want to block employees from accessing social media sites. You should configure the:", o: ["Print Server.", "Proxy Server / Gateway / Firewall.", "Hub.", "File Server."], a: 1, e: "Content filtering is handled at the network edge by Proxies or Firewalls." },
-            { c: "Scenarios", q: "Scenario: You are designing a network for a bank. Security is the #1 priority. You should use:", o: ["Peer-to-Peer Model.", "Client/Server Model.", "Hybrid Model with mostly P2P.", "No network."], a: 1, e: "Client/Server allows for strict, centralized security policies and auditing." },
-            { c: "Scenarios", q: "Scenario: A user sends a print job, but the printer is busy. Where does the job wait?", o: ["In the ether.", "In the Print Queue on the Print Server.", "On the monitor.", "In the router."], a: 1, e: "The print server spools the job in a queue until the printer is ready." },
-            { c: "Scenarios", q: "Scenario: You are connecting a new branch office. They use a completely different network protocol than HQ. You need a:", o: ["Bridge.", "Gateway.", "Switch.", "Repeater."], a: 1, e: "Different protocols require translation, which is the job of a Gateway." },
-            { c: "Scenarios", q: "Scenario: Signal strength is weak at the end of a long hallway. You need a:", o: ["Router.", "Repeater / Extender.", "Gateway.", "Modem."], a: 1, e: "Repeaters amplify and extend the reach of a signal." },
-
-            // Section 8
-            { c: "General Concepts", q: "'Topology' is:", o: ["The study of maps.", "The physical or logical layout of network devices.", "The speed of the network.", "The type of data."], a: 1, e: "Topology refers to the shape or structure of the network (Star, Bus, Ring, etc.)." },
-            { c: "General Concepts", q: "Which is a physical topology?", o: ["HTTP.", "Star, Bus, Ring.", "Windows.", "Client/Server."], a: 1, e: "Star, Bus, and Ring describe how cables are physically connected." },
-            { c: "General Concepts", q: "LAN stands for:", o: ["Large Area Network.", "Local Area Network.", "Lost Area Network.", "Link Area Network."], a: 1, e: "Local Area Network covers a small geographic area like a home or office." },
-            { c: "General Concepts", q: "WAN stands for:", o: ["Wide Area Network.", "Web Area Network.", "Wired Area Network.", "Whole Area Network."], a: 0, e: "Wide Area Network covers large distances (cities, countries)." },
-            { c: "General Concepts", q: "MAN stands for:", o: ["Main Area Network.", "Metropolitan Area Network.", "Mini Area Network.", "Mass Area Network."], a: 1, e: "Metropolitan Area Network covers a city-sized area." },
-            { c: "General Concepts", q: "The Internet is the largest example of a:", o: ["LAN.", "WAN.", "PAN.", "Intranet."], a: 1, e: "It is a global network of networks, making it the ultimate WAN." },
-            { c: "General Concepts", q: "An Intranet is:", o: ["The public internet.", "A private network using internet technologies (web, mail) accessible only to an organization's staff.", "A network for trains.", "A social media site."], a: 1, e: "It's an 'Internal Internet' for employees." },
-            { c: "General Concepts", q: "Bandwidth is typically measured in:", o: ["Seconds.", "Bits per second (bps, Mbps, Gbps).", "Bytes per minute.", "Pixels."], a: 1, e: "Bits per second measures how much data can flow through the medium in one second." },
-            { c: "General Concepts", q: "Latency refers to:", o: ["The speed of the network.", "The delay in data transmission (Ping).", "The width of the cable.", "The cost of the network."], a: 1, e: "Latency is the time it takes for a packet to get from point A to point B." },
-            { c: "General Concepts", q: "'Packets' are:", o: ["Boxes used for shipping.", "Small chunks of data sent over a network.", "Passwords.", "Errors."], a: 1, e: "Data is broken into small, manageable packets for transmission." },
-
-            // Section 9
-            { c: "Advanced Concepts", q: "The MAC Address is also known as the:", o: ["Logical Address.", "Physical or Hardware Address.", "Software Address.", "User Address."], a: 1, e: "It is burned into the network card hardware." },
-            { c: "Advanced Concepts", q: "A MAC address is usually written in:", o: ["Binary.", "Hexadecimal.", "Decimal.", "Octal."], a: 1, e: "Example: 00:1A:2B:3C:4D:5E (Hexadecimal)." },
-            { c: "Advanced Concepts", q: "An IP Address is a:", o: ["Physical Address.", "Logical Address.", "Permanent Address.", "Hardware Address."], a: 1, e: "It is assigned by software (Logical) and can change." },
-            { c: "Advanced Concepts", q: "IPv4 addresses are how many bits long?", o: ["128.", "32.", "64.", "16."], a: 1, e: "IPv4 uses 32 bits (e.g., 192.168.1.1)." },
-            { c: "Advanced Concepts", q: "IPv6 addresses are how many bits long?", o: ["32.", "128.", "64.", "256."], a: 1, e: "IPv6 uses 128 bits to provide vastly more addresses." },
-            { c: "Advanced Concepts", q: "Which device typically performs NAT (Network Address Translation)?", o: ["Switch.", "Router.", "Hub.", "Repeater."], a: 1, e: "Routers perform NAT to allow multiple private LAN devices to share one public IP." },
-            { c: "Advanced Concepts", q: "NAT is used to:", o: ["Translate private IP addresses to a public IP address.", "Translate English to French.", "Translate MAC to IP.", "Increase speed."], a: 0, e: "It conserves public IP addresses by hiding internal IPs behind one public IP." },
-            { c: "Advanced Concepts", q: "'Unicast' means:", o: ["Sending data to everyone.", "Sending data from one source to one specific destination.", "Sending data to a group.", "Sending data to no one."], a: 1, e: "Uni = One. One-to-One communication." },
-            { c: "Advanced Concepts", q: "'Broadcast' means:", o: ["Sending data to one person.", "Sending data to all devices on the network segment.", "Sending data to a specific group.", "Receiving data only."], a: 1, e: "Broad = Wide. One-to-All communication." },
-            { c: "Advanced Concepts", q: "'Multicast' means:", o: ["Sending data to everyone.", "Sending data to a specific group of interested receivers.", "Sending data to one person.", "Storing data."], a: 1, e: "Multi = Many (but not all). One-to-Many communication." },
-            { c: "Advanced Concepts", q: "Which layer handles error detection (CRC)?", o: ["Layer 1.", "Layer 2 (Data Link).", "Layer 3.", "Layer 7."], a: 1, e: "The Data Link layer Frame Trailer usually contains the CRC (Cyclic Redundancy Check)." },
-            { c: "Advanced Concepts", q: "Which layer handles logical addressing (IP)?", o: ["Layer 1.", "Layer 2.", "Layer 3 (Network).", "Layer 4."], a: 2, e: "Network Layer (L3) is where IP addresses live." },
-            { c: "Advanced Concepts", q: "Which layer defines the cables and voltages?", o: ["Layer 1 (Physical).", "Layer 2.", "Layer 3.", "Layer 4."], a: 0, e: "Physical Layer (L1) deals with the hardware specifications." },
-            { c: "Advanced Concepts", q: "A 'Frame' is the data unit at which layer?", o: ["Layer 1.", "Layer 2.", "Layer 3.", "Layer 4."], a: 1, e: "Data Link Layer (L2) PDU is called a Frame." },
-            { c: "Advanced Concepts", q: "A 'Packet' is the data unit at which layer?", o: ["Layer 1.", "Layer 2.", "Layer 3.", "Layer 4."], a: 2, e: "Network Layer (L3) PDU is called a Packet." },
-
-            // Section 10
-            { c: "Connectivity", q: "Which cable is most common for LANs today?", o: ["Coaxial.", "Twisted Pair (Cat5e/Cat6).", "Fiber Optic (for desktops).", "Phone wire."], a: 1, e: "UTP (Unshielded Twisted Pair) is the standard for connecting PCs to switches." },
-            { c: "Connectivity", q: "UTP stands for:", o: ["Universal Twisted Pair.", "Unshielded Twisted Pair.", "Ultra Twisted Pair.", "Under Twisted Pair."], a: 1, e: "It is 'Unshielded' because it lacks the metal foil shield found in STP." },
-            { c: "Connectivity", q: "STP stands for:", o: ["Shielded Twisted Pair.", "Standard Twisted Pair.", "Super Twisted Pair.", "Solid Twisted Pair."], a: 0, e: "Shielded Twisted Pair has protection against interference." },
-            { c: "Connectivity", q: "The connector used for standard Ethernet cables is:", o: ["RJ-11.", "RJ-45.", "USB.", "HDMI."], a: 1, e: "RJ-45 is the standard 8-pin connector for ethernet." },
-            { c: "Connectivity", q: "RJ-11 is typically used for:", o: ["Ethernet.", "Telephone lines.", "Monitors.", "Power."], a: 1, e: "RJ-11 is the smaller 4-or-6 pin connector for phones." },
-            { c: "Connectivity", q: "Fiber Optic cable uses what to transmit data?", o: ["Electricity.", "Light.", "Radio waves.", "Sound."], a: 1, e: "It sends pulses of light through glass or plastic strands." },
-            { c: "Connectivity", q: "The main advantage of Fiber Optic over Copper is:", o: ["It is cheaper.", "Immunity to Electromagnetic Interference (EMI) and longer distances.", "It is easier to install.", "It is heavier."], a: 1, e: "Light cannot be disturbed by magnets or electricity (EMI)." },
-            { c: "Connectivity", q: "Single-mode fiber is used for:", o: ["Short distances.", "Very long distances (Telecommunications).", "Audio cables.", "Power cords."], a: 1, e: "Single-mode uses a laser and very thin core for extreme distance." },
-            { c: "Connectivity", q: "Multi-mode fiber is used for:", o: ["Intercontinental links.", "Shorter distances (e.g., within a building or campus).", "Phone lines.", "Satellite TV."], a: 1, e: "Multi-mode uses LEDs and is cheaper, but has shorter range." },
-            { c: "Connectivity", q: "'Attenuation' refers to:", o: ["Strengthening of a signal.", "Loss of signal strength as it travels.", "Speed of signal.", "Encryption of signal."], a: 1, e: "Signals get weaker the further they travel; this loss is attenuation." },
-
-            // Section 11
-            { c: "Recap & Misc", q: "Which device is 'Layer 1' only?", o: ["Switch.", "Hub / Repeater.", "Router.", "Bridge."], a: 1, e: "Hubs do not read data; they just repeat electrical signals (L1)." },
-            { c: "Recap & Misc", q: "Which server stores user profiles in a domain?", o: ["Web Server.", "Domain Controller / File Server.", "Proxy Server.", "Print Server."], a: 1, e: "The Domain Controller authenticates, and often a File Server stores the roaming profile data." },
-            { c: "Recap & Misc", q: "A 'Standalone Server' is:", o: ["A server not part of a domain.", "A server that stands on legs.", "A broken server.", "A main server."], a: 0, e: "It manages its own local users and is not part of a centralized domain." },
-            { c: "Recap & Misc", q: "Which network type uses Bluetooth?", o: ["WAN.", "PAN (Personal Area Network).", "LAN.", "MAN."], a: 1, e: "Bluetooth connects devices around a person (Personal Area)." },
-            { c: "Recap & Misc", q: "NFC stands for:", o: ["Not For Computers.", "Near Field Communication.", "Network Field Control.", "New Frequency Control."], a: 1, e: "It is used for very close contact (like tapping a credit card)." },
-            { c: "Recap & Misc", q: "Which is an example of a Web Browser (Client)?", o: ["Apache.", "Chrome / Firefox.", "IIS.", "Linux."], a: 1, e: "Browsers are the client software used to request web pages." },
-            { c: "Recap & Misc", q: "Which is an example of a Server OS?", o: ["Windows 10 Home.", "Windows Server 2019 / Linux (RedHat, Ubuntu Server).", "Android.", "iOS."], a: 1, e: "These OSs are optimized for serving services, not playing games." },
-            { c: "Recap & Misc", q: "'Uptime' refers to:", o: ["How long a server has been running without crashing/rebooting.", "Time of day.", "Boot speed.", "Internet speed."], a: 0, e: "High uptime (e.g., 99.999%) is a key goal for servers." },
-            { c: "Recap & Misc", q: "Redundancy in servers (e.g., RAID, Dual Power Supplies) is for:", o: ["Speed.", "Fault Tolerance / Reliability.", "Looks.", "Cost saving."], a: 1, e: "If one part fails, the other takes over, keeping the server running." },
-            { c: "Recap & Misc", q: "A 'Patch Panel' is used to:", o: ["Route data.", "Organize and terminate cable runs in a rack.", "Patch software.", "Cool the room."], a: 1, e: "It connects the wall jacks to the server room rack in an organized way." },
-            { c: "Recap & Misc", q: "'Throughput' is:", o: ["The theoretical maximum speed.", "The actual speed of data transfer achieved.", "The weight of the cable.", "The length of the cable."], a: 1, e: "Bandwidth is the potential; Throughput is what you actually get." },
-            { c: "Recap & Misc", q: "Which device acts as a 'Demarcation Point' in a home network?", o: ["The Modem (connecting ISP network to Home network).", "The PC.", "The Printer.", "The Mouse."], a: 0, e: "It separates the ISP's responsibility from the Customer's responsibility." },
-            { c: "Recap & Misc", q: "'Sneaker-net' refers to:", o: ["A fast network.", "Moving files by physically walking with a disk/USB drive.", "A network of shoes.", "Wireless network."], a: 1, e: "Using your sneakers to walk the data over." },
-            { c: "Recap & Misc", q: "Which is NOT a network device?", o: ["Router.", "Switch.", "CPU Fan.", "Bridge."], a: 2, e: "A fan cools the computer; it does not process network data." },
-            { c: "Recap & Misc", q: "The 'backbone' of a network is:", o: ["The slowest part.", "The high-capacity core connection linking different segments.", "The user's chair.", "The mousepad."], a: 1, e: "It handles the major traffic load between sub-networks." },
-            { c: "Recap & Misc", q: "If a switch has 24 ports and is Full Duplex 1Gbps, what is the bandwidth per port?", o: ["1Gbps / 24.", "1Gbps dedicated (in both directions).", "10Mbps.", "Shared 1Gbps."], a: 1, e: "Switches provide dedicated bandwidth per port." },
-            { c: "Recap & Misc", q: "Why don't we use Hubs much anymore?", o: ["They are too expensive.", "They cause high collision rates and low security/performance.", "They are too fast.", "They are too big."], a: 1, e: "Switches are superior in speed, security, and efficiency." },
-            { c: "Recap & Misc", q: "A 'Smart Switch' is also known as a:", o: ["Managed Switch.", "Hub.", "Router.", "Passive Switch."], a: 0, e: "It allows for configuration (VLANs, security) unlike unmanaged switches." },
-            { c: "Recap & Misc", q: "Which allows a server to handle more hard drive failures without losing data?", o: ["Faster CPU.", "RAID (Redundant Array of Independent Disks).", "More RAM.", "Better Monitor."], a: 1, e: "RAID duplicates data across drives for redundancy." },
-            { c: "Recap & Misc", q: "Which protocol is used to assign IP addresses?", o: ["DNS.", "DHCP.", "FTP.", "HTTP."], a: 1, e: "DHCP = Dynamic Host Configuration Protocol." },
-            { c: "Recap & Misc", q: "Which protocol resolves Names to IPs?", o: ["DHCP.", "DNS.", "SMTP.", "ARP."], a: 1, e: "DNS = Domain Name System." },
-            { c: "Recap & Misc", q: "Which protocol resolves IPs to MAC addresses?", o: ["DNS.", "ARP (Address Resolution Protocol).", "DHCP.", "HTTP."], a: 1, e: "ARP maps layer 3 addresses to layer 2 addresses." },
-            { c: "Recap & Misc", q: "Ping uses which protocol?", o: ["TCP.", "ICMP.", "UDP.", "HTTP."], a: 1, e: "ICMP (Internet Control Message Protocol) is used for diagnostics like Ping." },
-            { c: "Recap & Misc", q: "Which is a connectionless protocol (faster, no guarantee of delivery)?", o: ["TCP.", "UDP.", "FTP.", "HTTP."], a: 1, e: "UDP (User Datagram Protocol) sends data without checking if it arrived (Fire and Forget)." },
-            { c: "Recap & Misc", q: "Which is a connection-oriented protocol (reliable, guarantees delivery)?", o: ["UDP.", "TCP.", "IP.", "Ethernet."], a: 1, e: "TCP (Transmission Control Protocol) uses a handshake and acknowledgments to ensure delivery." },
-            { c: "Final Review", q: "What does OSI stand for?", o: ["Operating System Interface", "Open Systems Interconnection", "Optical System Internet", "Only Simple Internet"], a: 1, e: "The OSI model is the standard conceptual model for networking." },
-            { c: "Final Review", q: "Which OSI layer is closest to the user?", o: ["Physical", "Network", "Application", "Session"], a: 2, e: "The Application layer (Layer 7) interacts directly with software applications." },
-            { c: "Final Review", q: "Which device connects a LAN to a WAN?", o: ["Switch", "Hub", "Router", "Repeater"], a: 2, e: "Routers are designed to route traffic between different networks." },
-            { c: "Final Review", q: "What is the typical speed of Fast Ethernet?", o: ["10 Mbps", "100 Mbps", "1000 Mbps", "10 Gbps"], a: 1, e: "Fast Ethernet is defined as 100 Mbps." },
-            { c: "Final Review", q: "What is the typical speed of Gigabit Ethernet?", o: ["100 Mbps", "1000 Mbps", "10 Gbps", "1 Tbps"], a: 1, e: "Gigabit Ethernet is 1000 Mbps (1 Gbps)." },
-            { c: "Final Review", q: "Which command checks connectivity to a remote host?", o: ["ipconfig", "ping", "netstat", "nslookup"], a: 1, e: "Ping sends ICMP echo requests to test reachability." },
-            { c: "Final Review", q: "Which command shows your current IP address configuration (Windows)?", o: ["ping", "ipconfig", "traceroute", "show ip"], a: 1, e: "ipconfig displays local IP configuration details." },
-            { c: "Final Review", q: "Which command traces the path packets take to a destination?", o: ["ping", "tracert / traceroute", "netstat", "nslookup"], a: 1, e: "Tracert (Windows) or Traceroute (Linux/Mac) shows every hop along the path." },
-            { c: "Final Review", q: "What is 'Localhost' IP?", o: ["192.168.1.1", "127.0.0.1", "10.0.0.1", "0.0.0.0"], a: 1, e: "127.0.0.1 is the loopback address referring to the computer itself." },
-            { c: "Final Review", q: "What class of IP is 10.0.0.5?", o: ["Class A", "Class B", "Class C", "Class D"], a: 0, e: "Class A ranges from 1.0.0.0 to 126.0.0.0." },
-            { c: "Final Review", q: "What class of IP is 192.168.1.5?", o: ["Class A", "Class B", "Class C", "Class D"], a: 2, e: "Class C ranges from 192.0.0.0 to 223.255.255.255." },
-            { c: "Final Review", q: "Which allows private IPs to access the internet?", o: ["DNS", "NAT", "DHCP", "ARP"], a: 1, e: "Network Address Translation (NAT) allows private addresses to share a public one." },
-            { c: "Final Review", q: "A firewall primarily protects against:", o: ["Viruses on a USB stick", "Unauthorized network access", "Hardware failure", "Power surges"], a: 1, e: "Firewalls filter incoming and outgoing network traffic based on security rules." },
-            { c: "Final Review", q: "VPN stands for:", o: ["Virtual Private Network", "Very Personal Network", "Virtual Public Network", "Verified Private Network"], a: 0, e: "VPNs create a secure tunnel over a public network." },
-            { c: "Final Review", q: "Which wireless encryption is currently considered most secure?", o: ["WEP", "WPA", "WPA2/WPA3", "None"], a: 2, e: "WPA3 is the latest standard; WEP is obsolete and insecure." },
-            { c: "Final Review", q: "SSID stands for:", o: ["Secure Socket ID", "Service Set Identifier", "System Security ID", "Simple Service ID"], a: 1, e: "SSID is the technical name for a Wi-Fi network name." },
-            { c: "Final Review", q: "What device acts as a wireless transmitter/receiver?", o: ["Switch", "Access Point (WAP)", "Hub", "Bridge"], a: 1, e: "Wireless Access Points (WAPs) allow wireless devices to connect to a wired network." },
-            { c: "Final Review", q: "PoE stands for:", o: ["Power over Ethernet", "Point of Entry", "Protocol over Ethernet", "Power of Energy"], a: 0, e: "PoE allows data cables to also carry electrical power to devices like cameras and phones." },
-            { c: "Final Review", q: "A VLAN is a:", o: ["Virtual LAN", "Very Large LAN", "Visual LAN", "Verified LAN"], a: 0, e: "VLANs logically separate a physical switch into distinct networks." },
-            { c: "Final Review", q: "QoS stands for:", o: ["Quality of Service", "Quantity of Service", "Quick Operating System", "Quality of Speed"], a: 0, e: "QoS prioritizes certain traffic (like VoIP) to ensure performance." },
-            { c: "Final Review", q: "The 'Cloud' essentially refers to:", o: ["Wireless networks", "Servers accessed over the internet", "Satellite internet", "Rainy weather"], a: 1, e: "The Cloud is just someone else's computer/server that you access remotely." },
-            { c: "Final Review", q: "SaaS stands for:", o: ["Software as a Service", "System as a Service", "Storage as a Service", "Security as a Service"], a: 0, e: "SaaS delivers applications over the internet (e.g., Google Docs, Office 365)." },
-            { c: "Final Review", q: "IaaS stands for:", o: ["Internet as a Service", "Infrastructure as a Service", "Intelligence as a Service", "IP as a Service"], a: 1, e: "IaaS provides virtualized computing resources (e.g., AWS EC2)." },
-            { c: "Final Review", q: "Which port is used for HTTP?", o: ["21", "25", "80", "443"], a: 2, e: "Port 80 is the standard port for unencrypted web traffic." },
-            { c: "Final Review", q: "Which port is used for HTTPS?", o: ["80", "110", "443", "25"], a: 2, e: "Port 443 is the standard port for encrypted web traffic." },
-            { c: "Final Review", q: "Which port is used for SSH?", o: ["21", "22", "23", "25"], a: 1, e: "Port 22 is used for Secure Shell remote access." },
-            { c: "Final Review", q: "Which port is used for Telnet?", o: ["21", "22", "23", "25"], a: 2, e: "Port 23 is used for unencrypted Telnet remote access." },
-            { c: "Final Review", q: "Which port is used for FTP?", o: ["20/21", "25", "80", "110"], a: 0, e: "FTP uses ports 20 (data) and 21 (control)." },
-            { c: "Final Review", q: "Which port is used for SMTP?", o: ["25", "110", "143", "443"], a: 0, e: "SMTP (sending email) typically uses port 25." },
-            { c: "Final Review", q: "Which port is used for DNS?", o: ["53", "67", "68", "80"], a: 0, e: "DNS uses port 53." },
-            { c: "Final Review", q: "What is a 'hop' in networking?", o: ["A jump in speed", "One leg of a journey from router to router", "A broken cable", "A type of virus"], a: 1, e: "Each time a packet passes through a router, it is considered one hop." },
-            { c: "Final Review", q: "TTL stands for:", o: ["Time To Live", "Time To Load", "Total Traffic Limit", "Transmit To Link"], a: 0, e: "TTL is a value in a packet that prevents it from circulating forever." },
-            { c: "Final Review", q: "What happens when TTL reaches 0?", o: ["The packet speeds up", "The packet is discarded", "The packet is delivered", "The network crashes"], a: 1, e: "The router drops the packet to prevent infinite loops." },
-            { c: "Final Review", q: "Which cable connector looks like a phone jack but wider?", o: ["RJ-11", "RJ-45", "BNC", "USB"], a: 1, e: "RJ-45 is the standard 8-pin ethernet connector." },
-            { c: "Final Review", q: "Which cable has a central copper core and a shield?", o: ["Twisted Pair", "Coaxial", "Fiber", "Power"], a: 1, e: "Coaxial cable (like TV cable) has a single center conductor." },
-            { c: "Final Review", q: "Interference between wires in a cable is called:", o: ["Attenuation", "Crosstalk", "Latency", "Jitter"], a: 1, e: "Crosstalk occurs when signals jump from one wire to another." },
-            { c: "Final Review", q: "Twisting wires in UTP helps reduce:", o: ["Cost", "Crosstalk / EMI", "Weight", "Speed"], a: 1, e: "Twisting cancels out electromagnetic interference." },
-            { c: "Final Review", q: "Which category of cable supports 10 Gbps?", o: ["Cat5", "Cat5e", "Cat6a", "Cat3"], a: 2, e: "Cat6a is rated for 10 Gigabit speeds over long distances." },
-            { c: "Final Review", q: "Plenum cable is used in:", o: ["Underwater", "Ceilings / Air Ducts", "Outside", "Elevators"], a: 1, e: "Plenum cable has a fire-retardant jacket that doesn't emit toxic fumes." },
-            { c: "Final Review", q: "Which tool connects a cable to a patch panel?", o: ["Crimper", "Punchdown Tool", "Screwdriver", "Hammer"], a: 1, e: "A punchdown tool pushes the wire into the IDC block and cuts the excess." },
-            { c: "Final Review", q: "Which tool puts the RJ-45 connector on the cable?", o: ["Punchdown Tool", "Crimper", "Wire Stripper", "Tester"], a: 1, e: "A crimper squeezes the metal pins of the connector into the wires." },
-            { c: "Final Review", q: "A 'Loopback Plug' is used to:", o: ["Connect two switches", "Test a network port/card", "Extend a cable", "Hack a network"], a: 1, e: "It simulates a connection to test if the hardware is working." },
-            { c: "Final Review", q: "T568A and T568B are standards for:", o: ["Wiring pinouts", "IP addressing", "Wireless security", "Fiber types"], a: 0, e: "They define the color order of wires in an RJ-45 connector." },
-            { c: "Final Review", q: "A Crossover cable connects:", o: ["PC to Switch", "Switch to Router", "Like devices (e.g., Switch to Switch, PC to PC)", "Printer to Switch"], a: 2, e: "Crossover cables flip the send/receive pairs for direct connection." },
-            { c: "Final Review", q: "Modern switches use Auto-MDIX to:", o: ["Automatically detect cable type (Straight/Crossover)", "Speed up internet", "Assign IPs", "Block viruses"], a: 0, e: "It allows you to use any cable type, and the switch adjusts electronically." },
-            { c: "Final Review", q: "Which is a 'Link State' routing protocol?", o: ["RIP", "OSPF", "EIGRP", "BGP"], a: 1, e: "OSPF (Open Shortest Path First) builds a full map of the network." },
-            { c: "Final Review", q: "Which is a 'Distance Vector' routing protocol?", o: ["OSPF", "RIP", "IS-IS", "BGP"], a: 1, e: "RIP (Routing Information Protocol) makes decisions based on hop count." },
-            { c: "Final Review", q: "The 'Administrative Distance' determines:", o: ["Speed of route", "Trustworthiness of a route source", "Cost of route", "Length of cable"], a: 1, e: "Lower AD values are preferred/trusted more by routers." },
-            { c: "Final Review", q: "A 'Metric' in routing is:", o: ["The unit of measurement", "A value used to choose the best path", "The brand of router", "The administrator's name"], a: 1, e: "Metrics (like hop count, bandwidth) help routers pick the optimal path." },
-            { c: "Final Review", q: "Subnetting allows you to:", o: ["Connect to the internet", "Divide a network into smaller logical networks", "Increase cable speed", "Remove viruses"], a: 1, e: "Subnetting improves performance and security by breaking up broadcast domains." },
-            { c: "Final Review", q: "The Subnet Mask identifies:", o: ["The user", "Which part of the IP is Network vs Host", "The password", "The MAC address"], a: 1, e: "It masks the IP to reveal the network portion." },
-            { c: "Final Review", q: "CIDR stands for:", o: ["Classless Inter-Domain Routing", "Classful Internet Domain Routing", "Computer IP Data Route", "Central Internet Data Registry"], a: 0, e: "CIDR allows for flexible subnetting (e.g., /24, /30)." },
-            { c: "Final Review", q: "/24 represents which subnet mask?", o: ["255.0.0.0", "255.255.0.0", "255.255.255.0", "255.255.255.255"], a: 2, e: "24 bits ON = 255.255.255.0." }
+            // --- COMPARISONS & FINAL REVIEW (136-150) ---
+            { q: "Which is faster: Full Duplex (Switch) or Half Duplex (Hub)?", o: ["Full Duplex", "Half Duplex"], a: 0, exp: "Full Duplex allows sending and receiving simultaneously." },
+            { q: "Difference between Bridge and Router?", o: ["Router uses IP, Bridge uses MAC", "Router uses MAC, Bridge uses IP", "They are the same", "Bridge is wireless"], a: 0, exp: "Routers route (L3), Bridges switch/filter (L2)." },
+            { q: "Difference between Gateway and Bridge?", o: ["Gateway translates protocols, Bridge does not", "Bridge translates protocols", "Gateway is for LAN only", "Bridge is for WAN only"], a: 0, exp: "Gateways translate; Bridges connect similar LANs." },
+            { q: "Which server is used for 'Usenet'?", o: ["News Server", "Web Server", "Mail Server", "List Server"], a: 0, exp: "Usenet relies on News Servers." },
+            { q: "Which device typically has the most ports?", o: ["Switch", "Bridge", "Repeater", "Modem"], a: 0, exp: "Switches are designed for high port density." },
+            { q: "A 'dumb terminal' usually connects to a:", o: ["Mainframe/Server", "Printer", "Hub", "Switch"], a: 0, exp: "Terminals rely on a central host." },
+            { q: "Which creates a 'Bottle Neck'?", o: ["Server failure", "Client failure", "Switch failure", "Hub failure"], a: 0, exp: "If the central server is overwhelmed, it's a bottleneck." },
+            { q: "Peer-to-Peer is best described as:", o: ["Decentralized", "Centralized", "Hierarchical", "Expensive"], a: 0, exp: "No central authority exists." },
+            { q: "Microwave signals travel in:", o: ["Straight lines", "Curves", "Circles", "Zigzags"], a: 0, exp: "They are line-of-sight." },
+            { q: "Which device is a 'Signal Regenerator'?", o: ["Repeater", "NIC", "Cable", "Server"], a: 0, exp: "Regeneration is the definition of a Repeater." },
+            { q: "Which server type is associated with 'IRC'?", o: ["Chat Server", "Mail Server", "Web Server", "List Server"], a: 0, exp: "Internet Relay Chat." },
+            { q: "Which server type helps you find an email address in a company?", o: ["Directory Server", "File Server", "Print Server", "Fax Server"], a: 0, exp: "Directories (like LDAP) store user info." },
+            { q: "Which device connects a PC to the network media?", o: ["NIC", "Hub", "Switch", "Router"], a: 0, exp: "Network Interface Card." },
+            { q: "What is the disadvantage of a Hub?", o: ["Security and Traffic", "Cost", "Size", "Power"], a: 0, exp: "Hubs broadcast everything, causing security/traffic issues." },
+            { q: "What is the advantage of a Switch over a Hub?", o: ["Efficiency and Speed", "Cost", "Simplicity", "Weight"], a: 0, exp: "Switches direct traffic efficiently." }
         ];
 
-        // Ensure we have exactly 150 questions
-        // Note: The previous logic covered about 100~115 distinct items from the text. 
-        // To reach exactly 150 as requested, I have filled the gap with high-quality 'Final Review' questions 
-        // based on the standard Intro-to-Networking curriculum implied by the document.
-        // The original document had ~115 unique questions listed. The extra questions ensure the count is 150.
-
+        // --- APP LOGIC ---
         let currentQuestionIndex = 0;
         let score = 0;
-        let answered = 0;
+        let isAnswering = false;
 
-        const qText = document.getElementById('q-text');
-        const qCategory = document.getElementById('q-category');
-        const optionsContainer = document.getElementById('options-container');
-        const feedbackArea = document.getElementById('feedback-area');
-        const feedbackBox = document.getElementById('feedback-box');
-        const feedbackTitle = document.getElementById('feedback-title');
-        const feedbackText = document.getElementById('feedback-text');
-        const nextBtn = document.getElementById('next-btn');
-        const scoreDisplay = document.getElementById('score');
-        const totalAnsweredDisplay = document.getElementById('total-answered');
-        const currentQNumDisplay = document.getElementById('current-q-num');
-        const progressBar = document.getElementById('progress-bar');
-        const progressPercent = document.getElementById('progress-percent');
-        const quizContainer = document.getElementById('quiz-container');
-        const finishScreen = document.getElementById('finish-screen');
-        const finalScore = document.getElementById('final-score');
+        // Shuffle logic
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+
+        function startQuiz() {
+            document.getElementById('start-screen').classList.add('hidden');
+            document.getElementById('quiz-screen').classList.remove('hidden');
+            document.getElementById('quiz-screen').classList.add('flex');
+            
+            shuffleArray(questionBank);
+            currentQuestionIndex = 0;
+            score = 0;
+            updateScore();
+            loadQuestion();
+        }
+
+        function updateScore() {
+            document.getElementById('score-display').innerText = score;
+        }
 
         function loadQuestion() {
-            if (currentQuestionIndex >= questions.length) {
-                finishQuiz();
-                return;
-            }
-
-            const q = questions[currentQuestionIndex];
+            isAnswering = true;
+            const qData = questionBank[currentQuestionIndex];
             
+            // Text Updates
+            document.getElementById('question-count').innerText = `Question ${currentQuestionIndex + 1} of ${questionBank.length}`;
+            document.getElementById('question-text').innerText = qData.q;
+            
+            // Category Tag Logic (Simple heuristic)
+            const text = qData.q.toLowerCase();
+            let cat = "General";
+            if(text.includes('server') || text.includes('client')) cat = "Server/Client Roles";
+            else if(text.includes('switch') || text.includes('hub') || text.includes('router') || text.includes('bridge')) cat = "Network Devices";
+            else if(text.includes('scenario')) cat = "Scenario";
+            else if(text.includes('true') || text.includes('false')) cat = "True/False";
+            else if(text.includes('model') || text.includes('peer')) cat = "Network Models";
+            document.getElementById('category-tag').innerText = cat;
+            
+            // Progress Bar
+            const progress = ((currentQuestionIndex) / questionBank.length) * 100;
+            document.getElementById('progress-bar').style.width = `${progress}%`;
+
             // Reset UI
-            feedbackArea.classList.add('hidden');
+            document.getElementById('feedback-area').classList.add('hidden');
+            const optionsContainer = document.getElementById('options-container');
             optionsContainer.innerHTML = '';
-            qText.innerText = q.q;
-            qCategory.innerText = q.c;
-            currentQNumDisplay.innerText = currentQuestionIndex + 1;
-            
-            // Progress
-            const pct = Math.round((currentQuestionIndex / questions.length) * 100);
-            progressBar.style.width = `${pct}%`;
-            progressPercent.innerText = `${pct}%`;
 
-            // Create Options
-            q.o.forEach((opt, index) => {
+            // Generate Buttons
+            qData.o.forEach((opt, index) => {
                 const btn = document.createElement('button');
-                btn.className = 'option-btn w-full text-left p-4 rounded-xl border-2 border-gray-200 bg-white hover:border-blue-300 text-gray-700 font-medium relative overflow-hidden';
+                btn.className = `w-full text-left p-3 md:p-4 rounded-lg border-2 border-gray-100 bg-white hover:border-blue-400 hover:bg-blue-50 transition-all font-medium text-gray-700 shadow-sm`;
+                btn.innerText = opt;
                 btn.onclick = () => checkAnswer(index, btn);
-                
-                const span = document.createElement('span');
-                span.innerText = opt;
-                
-                // Add A/B/C/D label
-                const label = document.createElement('span');
-                label.className = 'inline-block w-6 h-6 rounded-full bg-gray-100 text-gray-500 text-xs text-center leading-6 mr-3 font-bold';
-                label.innerText = String.fromCharCode(65 + index); // A, B, C...
-
-                btn.prepend(label);
-                btn.appendChild(span);
                 optionsContainer.appendChild(btn);
             });
         }
 
-        function checkAnswer(selectedIndex, btn) {
-            // Disable all buttons
-            const buttons = optionsContainer.querySelectorAll('button');
-            buttons.forEach(b => {
-                b.disabled = true;
-                b.classList.add('opacity-70', 'cursor-not-allowed');
-            });
+        function checkAnswer(selectedIndex, btnElement) {
+            if (!isAnswering) return;
+            isAnswering = false;
 
-            const q = questions[currentQuestionIndex];
-            const isCorrect = selectedIndex === q.a;
+            const qData = questionBank[currentQuestionIndex];
+            const buttons = document.getElementById('options-container').children;
+            const correctBtn = buttons[qData.a];
 
-            // Highlight Selected
-            if (isCorrect) {
-                btn.classList.remove('border-gray-200', 'bg-white');
-                btn.classList.add('border-green-500', 'bg-green-50', 'text-green-800');
-                btn.querySelector('span:first-child').classList.add('bg-green-200', 'text-green-800');
-                
+            // Feedback Logic
+            const feedbackArea = document.getElementById('feedback-area');
+            const feedbackTitle = document.getElementById('feedback-title');
+            const feedbackText = document.getElementById('feedback-text');
+            const feedbackIcon = document.getElementById('feedback-icon');
+
+            feedbackArea.classList.remove('hidden');
+            // Scroll feedback into view for mobile
+            setTimeout(() => feedbackArea.scrollIntoView({ behavior: 'smooth', block: 'end' }), 100);
+
+            if (selectedIndex === qData.a) {
+                // Correct
                 score++;
-                scoreDisplay.innerText = score;
-                
-                feedbackBox.className = "p-4 rounded-lg border-l-4 border-green-500 bg-green-50";
+                updateScore();
+                btnElement.classList.add('correct-anim');
                 feedbackTitle.innerText = "Correct!";
-                feedbackTitle.className = "font-bold text-lg mb-1 text-green-700";
+                feedbackTitle.className = "font-bold text-lg text-green-700";
+                feedbackIcon.innerHTML = '<i class="fas fa-check-circle text-green-600"></i>';
+                feedbackArea.classList.add('bg-green-50', 'border-green-500');
+                feedbackArea.classList.remove('bg-red-50', 'border-red-500');
             } else {
-                btn.classList.remove('border-gray-200', 'bg-white');
-                btn.classList.add('border-red-500', 'bg-red-50', 'text-red-800');
-                btn.querySelector('span:first-child').classList.add('bg-red-200', 'text-red-800');
-                
-                // Highlight correct one
-                const correctBtn = buttons[q.a];
-                correctBtn.classList.remove('border-gray-200', 'bg-white', 'opacity-70');
-                correctBtn.classList.add('border-green-500', 'bg-green-50', 'text-green-800');
-                correctBtn.querySelector('span:first-child').classList.add('bg-green-200', 'text-green-800');
-
-                feedbackBox.className = "p-4 rounded-lg border-l-4 border-red-500 bg-red-50";
+                // Wrong
+                btnElement.classList.add('wrong-anim');
+                correctBtn.classList.add('correct-anim'); 
                 feedbackTitle.innerText = "Incorrect";
-                feedbackTitle.className = "font-bold text-lg mb-1 text-red-700";
+                feedbackTitle.className = "font-bold text-lg text-red-700";
+                feedbackIcon.innerHTML = '<i class="fas fa-times-circle text-red-600"></i>';
+                feedbackArea.classList.add('bg-red-50', 'border-red-500');
+                feedbackArea.classList.remove('bg-green-50', 'border-green-500');
             }
 
-            answered++;
-            totalAnsweredDisplay.innerText = answered;
-            feedbackText.innerText = q.e;
-            feedbackArea.classList.remove('hidden');
+            feedbackText.innerText = qData.exp;
+            
+            // Disable all buttons
+            for (let btn of buttons) {
+                btn.disabled = true;
+                btn.classList.add('cursor-not-allowed', 'opacity-80');
+                if (btn !== correctBtn && btn !== btnElement) {
+                    btn.classList.add('opacity-50');
+                }
+            }
         }
 
         function nextQuestion() {
             currentQuestionIndex++;
-            loadQuestion();
+            if (currentQuestionIndex < questionBank.length) {
+                loadQuestion();
+            } else {
+                showResults();
+            }
         }
 
-        function finishQuiz() {
-            quizContainer.classList.add('hidden');
-            finishScreen.classList.remove('hidden');
-            finalScore.innerText = score;
-            
-            // Fill progress bar
-            progressBar.style.width = `100%`;
-            progressPercent.innerText = `100%`;
+        function showResults() {
+            document.getElementById('quiz-screen').classList.add('hidden');
+            document.getElementById('result-screen').classList.remove('hidden');
+            document.getElementById('result-screen').classList.add('flex');
+
+            const percentage = Math.round((score / questionBank.length) * 100);
+            document.getElementById('final-score').innerText = `${percentage}%`;
+            document.getElementById('final-score-text').innerText = `${score} / ${questionBank.length}`;
+
+            const iconDiv = document.getElementById('final-icon');
+            if (percentage >= 90) {
+                iconDiv.innerHTML = '<i class="fas fa-crown text-yellow-400"></i>';
+            } else if (percentage >= 75) {
+                iconDiv.innerHTML = '<i class="fas fa-trophy text-blue-500"></i>';
+            } else if (percentage >= 50) {
+                iconDiv.innerHTML = '<i class="fas fa-thumbs-up text-green-500"></i>';
+            } else {
+                iconDiv.innerHTML = '<i class="fas fa-book-open text-gray-500"></i>';
+            }
         }
-
-        function restartQuiz() {
-            currentQuestionIndex = 0;
-            score = 0;
-            answered = 0;
-            scoreDisplay.innerText = 0;
-            totalAnsweredDisplay.innerText = 0;
-            
-            finishScreen.classList.add('hidden');
-            quizContainer.classList.remove('hidden');
-            
-            loadQuestion();
-        }
-
-        // Initialize
-        loadQuestion();
-
     </script>
 </body>
 </html>
